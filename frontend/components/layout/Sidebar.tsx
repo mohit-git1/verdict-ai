@@ -1,122 +1,135 @@
 'use client'
-import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAssignmentStore } from '@/store/assignmentStore'
 
-const navItems = [
-  {
-    label: 'Home',
-    href: '/',
-    icon: (
-      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-      </svg>
-    ),
-  },
-  {
-    label: 'My Groups',
-    href: '/groups',
-    icon: (
-      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Assignments',
-    href: '/assignments',
-    icon: (
-      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
-      </svg>
-    ),
-  },
-  {
-    label: "AI Teacher's Toolkit",
-    href: '/toolkit',
-    icon: (
-      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
-      </svg>
-    ),
-  },
-  {
-    label: 'My Library',
-    href: '/library',
-    icon: (
-      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-]
-
-export default function Sidebar({ mobileOpen = false, onClose = () => {} }: { mobileOpen?: boolean; onClose?: () => void }) {
+export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const { assignments } = useAssignmentStore()
   const assignmentCount = assignments.length
 
+  const navItems = [
+    {
+      label: 'Home',
+      href: '/',
+      icon: (
+        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25A2.25 2.25 0 0113.5 8.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'My Groups',
+      href: '/groups',
+      icon: (
+        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Assignments',
+      href: '/assignments',
+      icon: (
+        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+      ),
+    },
+    {
+      label: "AI Teacher's Toolkit",
+      href: '/toolkit',
+      icon: (
+        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
+        </svg>
+      ),
+    },
+    {
+      label: 'My Library',
+      href: '/library',
+      icon: (
+        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+    },
+  ]
+
   return (
     <>
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <div className="md:hidden fixed inset-0 bg-black/50 z-40" onClick={onClose} />
-      )}
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex flex-col w-[240px] min-h-screen bg-white border-r border-gray-100 fixed left-0 top-0 z-30">
 
-      {/* Desktop & Mobile Slide-in Sidebar */}
-      <aside className={`flex flex-col w-[240px] min-h-screen bg-white border-r border-[#F0F0F0] fixed left-0 top-0 z-50 transform transition-transform md:translate-x-0 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Logo */}
-        <div className="pt-[24px] pl-[20px] pb-[24px]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-900">
-              <span className="text-white font-bold text-sm">V</span>
+        <div className="px-5 pt-8 pb-6">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-[42px] h-[42px] rounded-[13px] flex items-center justify-center flex-shrink-0 shadow-[0_8px_16px_rgba(0,0,0,0.2)]"
+              style={{ background: 'linear-gradient(to top right, #1a0b0b 0%, #b82525 45%, #ffa040 100%)' }}
+            >
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                {/* Left arm (shaded fold) */}
+                <path d="M4 8 h8 l7 17 h-6 L4 8 z" fill="#E2E8F0" />
+                {/* Right arm (top white overlap) */}
+                <path d="M28 8 h-8 l-7 17 h6 l7-17 z" fill="#FFFFFF" style={{ filter: 'drop-shadow( -2px 0px 1px rgba(0,0,0,0.15) )' }} />
+              </svg>
             </div>
-            <span className="font-semibold text-[15px] text-[#111111]">VedaAI</span>
+            <span className="font-extrabold text-[24px] tracking-tight text-gray-900 leading-none" style={{ letterSpacing: '-0.03em' }}>VedaAI</span>
           </div>
         </div>
 
         {/* Create Assignment Button */}
-        <div className="px-[16px] mb-6">
+        <div className="px-4 mb-6">
           <button
             onClick={() => router.push('/assignments/create')}
-            className="w-full h-[40px] flex items-center justify-center gap-[6px] rounded-full text-white text-[14px] font-medium transition-colors bg-[#111111] border-2 border-[#E8431C] hover:bg-black"
+            className="relative w-full h-[40px] rounded-full shadow-[0_4px_12px_rgba(232,67,28,0.25)] transition-all hover:shadow-[0_6px_16px_rgba(232,67,28,0.35)] active:scale-95 group"
           >
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Create Assignment
+            {/* Outline Gradient */}
+            <div className="absolute inset-0 rounded-full p-[1.5px] bg-gradient-to-r from-[#FFA06A] via-[#E8431C] to-[#B01E1E]">
+              {/* Inner Fill */}
+              <div className="w-full h-full rounded-full bg-[#2A2B2A] transition-colors group-hover:bg-[#333433]"></div>
+            </div>
+            {/* Content Array */}
+            <div className="absolute inset-0 flex items-center justify-center gap-[6px] text-white text-[15px] font-medium tracking-wide">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M10 1C10 7.5 11.5 9 17 9C11.5 9 10 10.5 10 17C10 10.5 8.5 9 3 9C8.5 9 10 7.5 10 1Z" />
+                <path d="M18.5 2C18.5 4.5 19.5 5 22 5C19.5 5 18.5 5.5 18.5 8C18.5 5.5 17.5 5 15 5C17.5 5 18.5 4.5 18.5 2Z" />
+              </svg>
+              Create Assignment
+            </div>
           </button>
         </div>
 
         {/* Nav Items */}
-        <nav className="flex-1 px-[12px]">
+        <nav className="flex-1 px-3 space-y-0.5">
           {navItems.map((item) => {
-            const isAssignmentGen = pathname.startsWith('/assignments/') && pathname !== '/assignments/create'
-            const isAssignmentsBase = pathname === '/assignments' || pathname === '/assignments/create'
-            const isActive = 
-              pathname === item.href || 
-              (item.href === '/assignments' && isAssignmentsBase) ||
-              (item.href === '/toolkit' && (pathname.startsWith('/toolkit') || isAssignmentGen))
+            const isActive =
+              pathname === item.href ||
+              (item.href === '/assignments' && pathname.startsWith('/assignments') && !pathname.startsWith('/assignments/create'))
+            const isToolkit = item.href === '/toolkit' && pathname.startsWith('/assignments/') && pathname !== '/assignments/create'
+            const active = isActive || isToolkit
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={onClose}
-                className={`flex items-center gap-3 px-[12px] h-[40px] rounded-[10px] text-[14px] transition-colors mb-1 ${
-                  isActive
-                    ? 'bg-[#F3F4F6] text-[#111111] font-medium'
-                    : 'text-[#6B7280] hover:bg-[#F9FAFB] hover:text-[#111111]'
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                  active
+                    ? 'bg-gray-100 text-gray-900 font-semibold'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800 font-medium'
                 }`}
               >
-                <span className={isActive ? 'text-[#374151]' : 'text-[#9CA3AF]'}>
+                <span className={active ? 'text-gray-700' : 'text-gray-400'}>
                   {item.icon}
                 </span>
                 <span className="flex-1">{item.label}</span>
                 {item.label === 'Assignments' && assignmentCount > 0 && (
-                  <span className="text-[11px] font-medium px-2 py-0.5 rounded-full text-white" style={{ background: '#E8431C' }}>
+                  <span
+                    className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white min-w-[20px] text-center"
+                    style={{ background: '#E8431C' }}
+                  >
                     {assignmentCount}
                   </span>
                 )}
@@ -125,43 +138,52 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }: { mo
           })}
         </nav>
 
-        {/* Bottom */}
-        <div className="px-[12px] pb-[20px] mt-auto">
-          {/* Settings Link */}
-          <Link href="/settings" onClick={() => onClose()} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors mb-2">
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+        {/* Bottom Section */}
+        <div className="px-3 pb-5 mt-auto space-y-1">
+          <Link
+            href="/settings"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+              pathname === '/settings'
+                ? 'bg-gray-100 text-gray-900 font-semibold'
+                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800 font-medium'
+            }`}
+          >
+            <span className={pathname === '/settings' ? 'text-gray-700' : 'text-gray-400'}>
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </span>
             Settings
           </Link>
 
           {/* School Card */}
-          <div className="flex items-center gap-3 px-3 py-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-            <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-              <span className="text-sm font-semibold text-orange-600">D</span>
+          <div className="flex items-center gap-3 px-3 py-3 bg-gray-50 rounded-2xl mt-2">
+            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-orange-100 flex items-center justify-center">
+              <span className="text-base font-bold text-orange-600">D</span>
             </div>
             <div className="min-w-0">
-              <p className="text-[13px] font-semibold text-gray-900 truncate line-clamp-1">Delhi Public School</p>
-              <p className="text-[12px] text-gray-500 truncate line-clamp-1">Bokaro Steel City</p>
+              <p className="text-[13px] font-bold text-gray-900 truncate">Delhi Public School</p>
+              <p className="text-[11px] text-gray-500 truncate">Bokaro Steel City</p>
             </div>
           </div>
         </div>
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#111111] z-40 flex items-center justify-around px-2 py-2 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around px-2 py-3"
+        style={{ background: '#111111' }}>
         {[
           { label: 'Home', href: '/', icon: navItems[0].icon },
           { label: 'My Groups', href: '/groups', icon: navItems[1].icon },
           { label: 'Library', href: '/library', icon: navItems[4].icon },
           { label: 'AI Toolkit', href: '/toolkit', icon: navItems[3].icon },
         ].map((item) => {
-          const isActive = pathname === item.href
+          const active = pathname === item.href
           return (
-            <Link key={item.href} href={item.href} onClick={() => onClose()} className="flex flex-col items-center gap-1 px-4 py-1">
-              <span className={isActive ? 'text-white' : 'text-[#9CA3AF]'}>{item.icon}</span>
-              <span className={`text-[10px] ${isActive ? 'text-white font-medium' : 'text-[#6B7280]'}`}>{item.label}</span>
+            <Link key={item.href} href={item.href} className="flex flex-col items-center gap-1 px-4 py-1">
+              <span style={{ color: active ? '#E8431C' : '#9CA3AF' }}>{item.icon}</span>
+              <span className="text-[10px]" style={{ color: active ? '#E8431C' : '#6B7280' }}>{item.label}</span>
             </Link>
           )
         })}
