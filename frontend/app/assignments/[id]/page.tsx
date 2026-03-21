@@ -5,6 +5,7 @@ import AppShell from '@/components/layout/AppShell'
 import { useAssignmentStore } from '@/store/assignmentStore'
 import { assignmentsApi, Assignment, Result } from '@/lib/api'
 import { useWebSocket } from '@/hooks/useWebSocket'
+import { useUserStore } from '@/store/userStore'
 
 const DifficultyBadge = ({ difficulty }: { difficulty: string }) => {
   const d = difficulty.toLowerCase()
@@ -29,6 +30,7 @@ export default function AssignmentOutputPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const { currentAssignment, currentResult, setCurrentAssignment, setCurrentResult, isGenerating, setGenerating } = useAssignmentStore()
+  const { name } = useUserStore()
   const [loading, setLoading] = useState(true)
   const [regenerating, setRegenerating] = useState(false)
   const paperRef = useRef<HTMLDivElement>(null)
@@ -102,13 +104,8 @@ export default function AssignmentOutputPage() {
       <div className="max-w-[720px] mx-auto pb-[80px]">
 
         {/* AI Message Bubble */}
-        <div className="bg-white rounded-[16px] border border-[#F0F0F0] p-[20px] mb-[24px] flex flex-col sm:flex-row items-start gap-[16px]">
-          <div className="w-[36px] h-[36px] rounded-full flex flex-shrink-0 items-center justify-center" style={{ background: 'linear-gradient(135deg, #E8431C, #FF6B35)' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-            </svg>
-          </div>
-          <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-[16px] w-full">
+        <div className="bg-[#262626] rounded-[24px] border border-[#333333] p-[24px] mb-[32px] flex flex-col items-start gap-[20px]">
+          <div className="flex-1 w-full">
             {isGenerating ? (
               <div className="flex items-center gap-[12px]">
                 <div className="flex gap-1.5">
@@ -116,25 +113,25 @@ export default function AssignmentOutputPage() {
                     <div key={i} className="w-[6px] h-[6px] bg-[#9CA3AF] rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
                   ))}
                 </div>
-                <p className="text-[14px] text-[#374151]">Generating your question paper, please wait...</p>
+                <p className="text-[15px] font-medium text-white pb-[20px]">Generating your question paper...</p>
               </div>
             ) : currentResult ? (
               <>
-                <p className="text-[14px] text-[#374151] leading-[1.6]">
-                  Certainly! Here is a customized Question Paper for your <strong>{currentAssignment?.subject || 'CBSE'}</strong> class.
+                <p className="text-[16px] text-white leading-[1.6] mb-[20px] font-medium tracking-tight">
+                  Certainly, {name ? name.split(' ')[0] : 'Lakshya'}! Here are customized Question Paper for your CBSE {currentResult.className || 'Grade 8'} {currentResult.subject || 'Science'} classes on the NCERT chapters:
                 </p>
                 <button
                   onClick={handleDownloadPDF}
-                  className="flex items-center gap-[8px] h-[36px] px-[16px] rounded-lg text-[13px] font-medium text-white transition-colors bg-[#16A34A] hover:bg-[#15803d]"
+                  className="flex items-center justify-center gap-[8px] h-[44px] px-[24px] rounded-full text-[14px] font-bold text-[#111111] transition-all bg-white hover:bg-gray-100 active:scale-95 shadow-sm"
                 >
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                  <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5h.01M9 20.25H9.01M6.75 18.375H6.76M11.25 18.375H11.26" />
                   </svg>
                   Download as PDF
                 </button>
               </>
             ) : (
-              <p className="text-[14px] text-[#6B7280]">
+              <p className="text-[15px] pb-[20px] font-medium text-white">
                 {currentAssignment?.status === 'failed'
                   ? 'Generation failed. Please try regenerating.'
                   : 'Starting generation...'}
@@ -145,7 +142,7 @@ export default function AssignmentOutputPage() {
 
         {/* Question Paper */}
         {currentResult && (
-          <div ref={paperRef} className="bg-white rounded-[16px] border border-[#F0F0F0] p-[16px] md:p-[32px] md:px-[40px] print:shadow-none print:border-none print:rounded-none">
+          <div ref={paperRef} id="printable-assignment" className="bg-white rounded-[16px] border border-[#F0F0F0] p-[16px] md:p-[32px] md:px-[40px] print:shadow-none print:border-none print:rounded-none">
             {/* School Header */}
             <div className="text-center mb-[16px] pb-[16px] border-b border-[#E5E7EB]">
               <h1 className="text-[15px] md:text-[17px] font-bold text-[#111111]">{currentResult.schoolName}</h1>
@@ -269,8 +266,8 @@ export default function AssignmentOutputPage() {
       <style jsx global>{`
         @media print {
           body * { visibility: hidden; }
-          .print\\:shadow-none, .print\\:shadow-none * { visibility: visible; }
-          .print\\:shadow-none { position: absolute; left: 0; top: 0; width: 100%; padding: 0 !important; margin: 0 !important; }
+          #printable-assignment, #printable-assignment * { visibility: visible; }
+          #printable-assignment { position: absolute; left: 0; top: 0; width: 100%; }
         }
       `}</style>
     </AppShell>
