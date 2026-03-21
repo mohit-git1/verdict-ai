@@ -40,14 +40,41 @@ export default function AssignmentsPage() {
 
   const StatusBadge = ({ status }: { status: Assignment['status'] }) => {
     const map = {
-      pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-700' },
-      processing: { label: 'Generating...', color: 'bg-blue-100 text-blue-700 animate-pulse' },
-      completed: { label: 'Ready', color: 'bg-green-100 text-green-700' },
-      failed: { label: 'Failed', color: 'bg-red-100 text-red-700' },
+      pending: { 
+        label: 'Pending', 
+        bg: '#FEF3C7', 
+        color: '#D97706',
+        dot: '#F59E0B'
+      },
+      processing: { 
+        label: 'Generating...', 
+        bg: '#DBEAFE', 
+        color: '#2563EB',
+        dot: '#3B82F6'
+      },
+      completed: { 
+        label: 'Ready', 
+        bg: '#DCFCE7', 
+        color: '#16A34A',
+        dot: '#22C55E'
+      },
+      failed: { 
+        label: 'Failed', 
+        bg: '#FEE2E2', 
+        color: '#DC2626',
+        dot: '#EF4444'
+      },
     }
     const s = map[status]
     return (
-      <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${s.color}`}>
+      <span 
+        className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full"
+        style={{ background: s.bg, color: s.color }}
+      >
+        <span 
+          className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+          style={{ background: s.dot }}
+        />
         {s.label}
       </span>
     )
@@ -150,10 +177,19 @@ export default function AssignmentsPage() {
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
             {filtered.map((assignment) => (
-              <div key={assignment._id} className="bg-white rounded-[16px] border border-[#F0F0F0] p-[20px] relative hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-shadow">
+              <div 
+                key={assignment._id} 
+                className="bg-white rounded-2xl border border-gray-200 p-5 relative cursor-pointer"
+                style={{ 
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
+                  minHeight: '120px'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)'}
+              >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1 min-w-0 pr-3">
-                    <h3 className="font-semibold text-[#111111] text-[15px] truncate mb-1.5">{assignment.title}</h3>
+                    <h3 className="font-semibold text-gray-900 text-[15px] leading-tight mb-1.5 truncate">{assignment.title}</h3>
                     <StatusBadge status={assignment.status} />
                   </div>
                   <div className="relative">
@@ -183,12 +219,12 @@ export default function AssignmentsPage() {
                     )}
                   </div>
                 </div>
-                <div className="flex items-center justify-between text-[12px] mt-[16px] pt-[12px] border-t border-[#F9FAFB]">
-                  <span className="text-[#6B7280]">
-                    <span className="font-bold text-[#374151]">Assigned on</span> : {formatDate(assignment.createdAt)}
+                <div className="flex items-center justify-between text-xs mt-4 pt-3 border-t border-gray-100">
+                  <span className="text-gray-500">
+                    <span className="font-semibold text-gray-700">Assigned on</span> : {formatDate(assignment.createdAt)}
                   </span>
-                  <span className="text-[#6B7280]">
-                    <span className="font-bold text-[#374151]">Due</span> : {formatDate(assignment.dueDate)}
+                  <span className="text-gray-500">
+                    <span className="font-semibold text-gray-700">Due</span> : {formatDate(assignment.dueDate)}
                   </span>
                 </div>
               </div>
@@ -196,13 +232,17 @@ export default function AssignmentsPage() {
           </div>
 
           {/* Desktop Overlay Button */}
-          <div className="hidden md:block fixed bottom-8 left-[calc(50%+120px)] -translate-x-1/2 z-20">
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20">
             <button
               onClick={() => router.push('/assignments/create')}
-              className="flex items-center gap-2 px-[24px] py-[12px] pb-[13px] rounded-full text-white text-[14px] font-medium shadow-lg"
-              style={{ background: '#111111' }}
+              className="flex items-center gap-2 px-7 py-3.5 text-white text-sm font-medium transition-all active:scale-95"
+              style={{ 
+                background: '#111111', 
+                borderRadius: '999px',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.2)'
+              }}
             >
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
               Create Assignment
@@ -211,18 +251,7 @@ export default function AssignmentsPage() {
         </div>
       )}
 
-      {/* FAB Mobile */}
-      <div className="md:hidden fixed bottom-24 right-5 z-20">
-        <button
-          onClick={() => router.push('/assignments/create')}
-          className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-transform"
-          style={{ background: '#E8431C' }}
-        >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-        </button>
-      </div>
+
 
       {/* Close menu on outside click */}
       {openMenu && (
