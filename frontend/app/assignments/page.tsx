@@ -232,7 +232,7 @@ export default function AssignmentsPage() {
           </div>
 
           {/* Desktop Overlay Button */}
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20">
+          <div className="hidden md:flex fixed bottom-8 left-1/2 -translate-x-1/2 z-20">
             <button
               onClick={() => router.push('/assignments/create')}
               className="flex items-center gap-2 px-7 py-3.5 text-white text-sm font-medium transition-all active:scale-95"
@@ -248,6 +248,7 @@ export default function AssignmentsPage() {
               Create Assignment
             </button>
           </div>
+
         </div>
       )}
 
@@ -257,6 +258,24 @@ export default function AssignmentsPage() {
       {openMenu && (
         <div className="fixed inset-0 z-40" onClick={() => setOpenMenu(null)} />
       )}
+
+      {/* Global Mobile FAB */}
+      <div className="fixed bottom-24 right-4 z-20 md:hidden">
+        <button
+          onClick={() => router.push('/assignments/create')}
+          className="w-13 h-13 flex items-center justify-center rounded-full shadow-lg transition-all active:scale-95"
+          style={{
+            width: '52px',
+            height: '52px',
+            background: 'white',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.15)'
+          }}
+        >
+          <svg width="22" height="22" fill="none" stroke="#E8431C" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </button>
+      </div>
     </AppShell>
   )
 }

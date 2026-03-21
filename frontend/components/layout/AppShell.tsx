@@ -15,10 +15,10 @@ export default function AppShell({ children, showBack, title, mobileTitle }: App
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      <Sidebar mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
       <div className="md:ml-[240px] min-h-screen flex flex-col pt-14 md:pt-0">
-        <Topbar showBack={showBack} title={title} mobileTitle={mobileTitle} onMenuClick={() => setMobileMenuOpen(true)} />
-        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
+        <Topbar showBack={showBack} title={title} onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
+        <main className="flex-1 p-4 md:p-6 pt-24 md:pt-6 pb-28 md:pb-6">
           {children}
         </main>
       </div>

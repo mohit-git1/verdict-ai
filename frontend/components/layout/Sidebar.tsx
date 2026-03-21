@@ -167,8 +167,8 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
 
       {/* Mobile Bottom Nav */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around px-2 py-3"
-        style={{ background: '#111111' }}
+        className="md:hidden fixed bottom-3 left-3 right-3 z-40 flex items-center justify-around px-2 py-3"
+        style={{ background: '#111111', borderRadius: '20px' }}
       >
         {[
           { label: 'Home', href: '/', icon: '/icons/home.svg' },
@@ -190,13 +190,13 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
                 height={24}
                 style={{
                   filter: active
-                    ? 'brightness(0) saturate(100%) invert(35%) sepia(90%) saturate(1000%) hue-rotate(340deg)'
-                    : 'brightness(0) saturate(100%) invert(60%)',
+                    ? 'brightness(0) saturate(100%) invert(100%)'
+                    : 'brightness(0) saturate(100%) invert(50%)',
                 }}
               />
               <span
-                className="text-[10px]"
-                style={{ color: active ? '#E8431C' : '#6B7280' }}
+                className="text-[10px] font-medium"
+                style={{ color: active ? '#FFFFFF' : '#6B7280' }}
               >
                 {item.label}
               </span>

@@ -135,30 +135,40 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
   return (
     <>
       {/* Mobile Topbar */}
-      <header className="md:hidden flex items-center justify-between px-4 h-14 bg-white border-b border-gray-100 fixed top-0 left-0 right-0 z-20">
-        <div className="flex items-center gap-2">
-          <img src="/VedaAI.png" alt="VedaAI" width={32} height={32} style={{ borderRadius: '22%' }} />
-          <span className="font-bold text-[15px] text-gray-900">VedaAI</span>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <div className="relative">
-            <button onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false) }} className="relative p-2">
-              <svg width="18" height="18" fill="none" stroke="#374151" strokeWidth="1.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-              </svg>
-              {pendingAssignments.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500"></span>
-              )}
-            </button>
-            {notifOpen && <NotifDropdown />}
+      <header className="md:hidden fixed top-0 left-0 right-0 z-20 px-3 pt-3">
+        <div className="flex items-center justify-between px-4 h-14 bg-white rounded-2xl shadow-sm">
+          <div className="flex items-center gap-2">
+            <img src="/VedaAI.png" alt="VedaAI" width={32} height={32} style={{ borderRadius: '22%' }} />
+            <span className="font-bold text-[16px] text-gray-900">VedaAI</span>
           </div>
-
-          <button onClick={onMenuClick} className="p-2 ml-1">
-            <svg width="20" height="20" fill="none" stroke="#374151" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <button onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false) }} className="relative p-1">
+                <svg width="20" height="20" fill="none" stroke="#374151" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                </svg>
+                {pendingAssignments.length > 0 && <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-red-500"></span>}
+              </button>
+              {notifOpen && <NotifDropdown />}
+            </div>
+            <div className="relative">
+              <button onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false) }} className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                {avatar ? (
+                  <img src={avatar} alt={name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-xs font-semibold text-gray-600">{initials}</span>
+                  </div>
+                )}
+              </button>
+              {profileOpen && <ProfileDropdown />}
+            </div>
+            <button onClick={onMenuClick} className="p-1">
+              <svg width="22" height="22" fill="none" stroke="#374151" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
