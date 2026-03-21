@@ -96,45 +96,60 @@ export default function AssignmentsPage() {
         /* ── EMPTY STATE ── */
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] text-center px-4">
           {/* Illustration */}
-          <div className="flex justify-center w-full">
-            <svg width="160" height="140" viewBox="0 0 160 140" fill="none">
-              <circle cx="80" cy="75" r="52" fill="#F0F0F5" />
-              {/* Document */}
-              <rect x="52" y="34" width="48" height="60" rx="5" fill="white" stroke="#E5E7EB" strokeWidth="1.5"/>
-              <line x1="62" y1="48" x2="90" y2="48" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="62" y1="56" x2="88" y2="56" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="62" y1="64" x2="85" y2="64" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round"/>
-              {/* Magnifying glass */}
-              <circle cx="88" cy="84" r="22" fill="white" stroke="#E5E7EB" strokeWidth="2"/>
-              <circle cx="85" cy="81" r="13" fill="#F8F8FC" stroke="#C4C4D4" strokeWidth="2"/>
-              {/* X mark */}
-              <path d="M80 76l10 10M90 76l-10 10" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round"/>
+          <div className="flex justify-center w-full mb-6">
+            <svg width="220" height="200" viewBox="0 0 220 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Background Circle */}
+              <circle cx="110" cy="100" r="85" fill="#EAEBEF" />
+              
+              {/* Squiggle */}
+              <path d="M50 115 C75 105, 80 85, 65 75 C50 65, 35 80, 50 100 C70 120, 95 85, 115 65" stroke="#111827" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+              
+              {/* Blue Sparkle */}
+              <path d="M65 145 Q75 145 75 135 Q75 145 85 145 Q75 145 75 155 Q75 145 65 145 Z" stroke="#4A72B2" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              
+              {/* Blue Dot */}
+              <circle cx="165" cy="120" r="4.5" fill="#4B77BE" />
+              
+              {/* Main Document */}
+              <rect x="85" y="45" width="75" height="95" rx="10" fill="white" />
+              <rect x="95" y="60" width="35" height="10" rx="4" fill="#111827" />
+              <rect x="95" y="78" width="45" height="8" rx="4" fill="#E5E7EB" />
+              <rect x="95" y="93" width="45" height="8" rx="4" fill="#E5E7EB" />
+              {/* Third body line has a gap for magnifying glass, but it overlaps */}
+              <rect x="95" y="108" width="45" height="8" rx="4" fill="#E5E7EB" />
+              <rect x="95" y="123" width="30" height="8" rx="4" fill="#E5E7EB" />
+
+              {/* Floating Tag Top Right */}
+              <rect x="145" y="40" width="42" height="20" rx="6" fill="white" />
+              <circle cx="155" cy="50" r="4.5" fill="#C4B5FD" />
+              <rect x="165" y="46" width="15" height="8" rx="4" fill="#D1D5DB" />
+
+              {/* Magnifying Glass */}
               {/* Handle */}
-              <line x1="96" y1="93" x2="107" y2="104" stroke="#9CA3AF" strokeWidth="3" strokeLinecap="round"/>
-              {/* Sparkles */}
-              <path d="M46 88l2-4 2 4-4-2 4 2" stroke="#93C5FD" strokeWidth="1.5" strokeLinejoin="round"/>
-              <path d="M112 50l1.5-3 1.5 3-3-1.5 3 1.5" stroke="#93C5FD" strokeWidth="1.5" strokeLinejoin="round"/>
-              <circle cx="113" cy="90" r="2" fill="#93C5FD"/>
-              {/* Pencil squiggle */}
-              <path d="M42 52c4-8 8 4 12-4" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-              {/* Small cards top right */}
-              <rect x="100" y="30" width="20" height="8" rx="2" fill="#E5E7EB"/>
-              <rect x="104" y="24" width="12" height="6" rx="2" fill="#D1D5DB"/>
+              <path d="M140 120 L168 148" stroke="#DEDEE6" strokeWidth="16" strokeLinecap="round" />
+              <path d="M162 142 L168 148" stroke="#F1F1F5" strokeWidth="16" strokeLinecap="round" /> {/* Highlight on tip */}
+
+              {/* Glass Frame */}
+              <circle cx="125" cy="108" r="34" fill="rgba(255,255,255,0.7)" stroke="#CDCDD6" strokeWidth="8" />
+
+              {/* Red X */}
+              <path d="M110 93 L140 123 M140 93 L110 123" stroke="#FF4D4D" strokeWidth="8" strokeLinecap="round" />
             </svg>
           </div>
 
-          <h2 className="text-[17px] font-semibold text-[#111111] mt-[24px] mb-2">No assignments yet</h2>
-          <p className="text-[14px] text-[#6B7280] max-w-[360px] leading-[1.6] text-center mx-auto mb-8">
-            Create your first assignment to start collecting and grading student
-            submissions. You can set up rubrics, define marking criteria, and let AI
-            assist with grading.
+          <h2 className="text-[24px] font-bold text-[#111111] mb-[12px]">No assignments yet</h2>
+          <p className="text-[16px] text-[#6B7280] max-w-[420px] leading-[1.6] text-center mx-auto mb-10 font-medium">
+            Create your first assignment to start collecting and grading student submissions. You can set up rubrics, define marking criteria, and let AI assist with grading.
           </p>
           <button
             onClick={() => router.push('/assignments/create')}
-            className="flex items-center justify-center gap-2 px-[24px] py-[12px] pb-[13px] rounded-full text-white text-[14px] font-medium"
-            style={{ background: '#111111' }}
+            className="flex items-center justify-center gap-2 px-[28px] py-[14px] rounded-[24px] text-white text-[16px] font-semibold transition-all hover:bg-[#27272A] active:scale-95"
+            style={{ 
+              background: '#18181B', 
+              border: '3px solid #3F3F46',
+            }}
           >
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
             Create Your First Assignment
