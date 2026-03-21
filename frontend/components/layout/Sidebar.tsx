@@ -89,23 +89,33 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
         {/* Create Assignment Button */}
         <div className="px-4 mb-6">
           <button
-            onClick={() => {
-              router.push('/assignments/create')
-              onMobileClose?.()
-            }}
-            className="relative w-full h-[40px] rounded-full transition-all hover:opacity-90 active:scale-95 group"
-          >
-            <div className="absolute inset-0 rounded-full p-[1.5px] bg-gradient-to-r from-[#FFA06A] via-[#E8431C] to-[#B01E1E]">
-              <div className="w-full h-full rounded-full bg-[#111111] transition-colors group-hover:bg-[#222222]"></div>
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center gap-[6px] text-white text-[14px] font-medium">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                <path d="M10 1C10 7.5 11.5 9 17 9C11.5 9 10 10.5 10 17C10 10.5 8.5 9 3 9C8.5 9 10 7.5 10 1Z" />
-                <path d="M18.5 2C18.5 4.5 19.5 5 22 5C19.5 5 18.5 5.5 18.5 8C18.5 5.5 17.5 5 15 5C17.5 5 18.5 4.5 18.5 2Z" />
-              </svg>
-              Create Assignment
-            </div>
-          </button>
+  onClick={() => {
+    router.push('/assignments/create')
+    onMobileClose?.()
+  }}
+  className="w-full flex items-center justify-center gap-2 text-white text-[14px] font-medium transition-all hover:opacity-90 active:scale-95"
+  style={{
+  background: '#2A2A2A',
+  border: '2.5px solid #E8431C',
+  borderRadius: '999px',
+  height: '44px',
+  boxShadow: '0 0 0 1px rgba(232,67,28,0.4)',
+}}
+>
+  {/* 4-pointed star icon */}
+  <div className="relative flex items-center justify-center w-5 h-5">
+  {/* Big 4-pointed star */}
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style={{ position: 'absolute' }}>
+    <path d="M12 2C12 2 13.5 8.5 15 10C16.5 11.5 22 12 22 12C22 12 16.5 12.5 15 14C13.5 15.5 12 22 12 22C12 22 10.5 15.5 9 14C7.5 12.5 2 12 2 12C2 12 7.5 11.5 9 10C10.5 8.5 12 2 12 2Z" />
+  </svg>
+  {/* Small 4-pointed star — top right diagonal */}
+  <svg width="8" height="8" viewBox="0 0 24 24" fill="white" style={{ position: 'absolute', top: '-2px', right: '-3px' }}>
+    <path d="M12 2C12 2 13.5 8.5 15 10C16.5 11.5 22 12 22 12C22 12 16.5 12.5 15 14C13.5 15.5 12 22 12 22C12 22 10.5 15.5 9 14C7.5 12.5 2 12 2 12C2 12 7.5 11.5 9 10C10.5 8.5 12 2 12 2Z" />
+    
+  </svg>
+</div>
+  Create Assignment
+</button>
         </div>
 
         {/* Nav Items */}
