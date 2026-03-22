@@ -7,26 +7,31 @@ const client = new OpenAI({
 })
 
 const QuestionSchema = z.object({
-  id: z.union([z.string(), z.number()]).transform(val => String(val)),
+  id: z.union([z.string(), z.number(), z.null()]).transform(val => String(val ?? '')),
   text: z.string(),
-  type: z.string(),
-  difficulty: z.enum(['easy', 'medium', 'hard']),
+  type: z.string().default('general'),
+  difficulty: z.string().transform(val => {
+    const d = val.toLowerCase()
+    if (d.includes('easy')) return 'easy'
+    if (d.includes('hard') || d.includes('challeng')) return 'hard'
+    return 'medium'
+  }).pipe(z.enum(['easy', 'medium', 'hard'])),
   marks: z.union([z.string(), z.number()]).transform(val => Number(val)),
-  answer: z.string().optional()
+  answer: z.union([z.string(), z.null(), z.undefined()]).optional().transform(val => val ?? undefined)
 })
 
 const SectionSchema = z.object({
-  id: z.union([z.string(), z.number()]).transform(val => String(val)),
+  id: z.union([z.string(), z.number(), z.null()]).transform(val => String(val ?? '')),
   title: z.string(),
-  instruction: z.string(),
+  instruction: z.string().default('Attempt all questions'),
   questions: z.array(QuestionSchema)
 })
 
 const PaperSchema = z.object({
-  paperTitle: z.string(),
-  subject: z.string(),
-  className: z.string(),
-  timeAllowed: z.string(),
+  paperTitle: z.string().default('Question Paper'),
+  subject: z.string().default('General'),
+  className: z.string().default('Class 10'),
+  timeAllowed: z.string().default('3 Hours'),
   maximumMarks: z.union([z.string(), z.number()]).transform(val => Number(val)),
   sections: z.array(SectionSchema)
 })
@@ -34,47 +39,71 @@ const PaperSchema = z.object({
 export type GeneratedPaper = z.infer<typeof PaperSchema>
 
 export async function generateQuestionPaper(prompt: string): Promise<GeneratedPaper> {
-  console.log('🤖 Calling NVIDIA LLM...')
+  const maxRetries = 3
 
-  const completion = await client.chat.completions.create({
-    model: 'meta/llama-3.1-8b-instruct',
-    messages: [
-      {
-        role: 'system',
-        content: 'You are an expert teacher. Always respond with valid JSON only. No markdown, no explanation, no code blocks.'
-      },
-      {
-        role: 'user',
-        content: prompt
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    console.log(`🤖 Calling NVIDIA LLM... (attempt ${attempt}/${maxRetries})`)
+
+    try {
+      const completion = await client.chat.completions.create({
+        model: 'meta/llama-3.1-8b-instruct',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert teacher. You MUST respond with valid JSON only.
+No markdown, no code blocks, no explanation. Just raw JSON.
+All id fields must be strings like "1", "2", "A", "B".
+All marks fields must be numbers like 2, 5, 10.
+difficulty must be exactly one of: "easy", "medium", "hard" (lowercase).`
+          },
+          {
+            role: 'user',
+            content: attempt === 1
+              ? prompt
+              : `${prompt}\n\nCRITICAL: Return ONLY valid JSON. No text before or after. Start with { and end with }.`
+          }
+        ],
+        temperature: attempt === 1 ? 0.7 : 0.3,
+        max_tokens: 4000
+      })
+
+      const rawText = completion.choices[0]?.message?.content || ''
+      console.log('🤖 Raw LLM response received, parsing...')
+
+      let cleaned = rawText
+        .replace(/```json/gi, '')
+        .replace(/```/g, '')
+        .trim()
+
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        cleaned = jsonMatch[0]
       }
-    ],
-    temperature: 0.7,
-    max_tokens: 4000
-  })
 
-  const rawText = completion.choices[0]?.message?.content || ''
-  console.log('🤖 Raw LLM response received, parsing...')
+      let parsed: any
+      try {
+        parsed = JSON.parse(cleaned)
+      } catch (err) {
+        console.error(`❌ JSON parse failed on attempt ${attempt}:`, cleaned.substring(0, 200))
+        if (attempt === maxRetries) throw new Error('LLM returned invalid JSON after all retries')
+        continue
+      }
 
-  const cleaned = rawText
-    .replace(/```json/gi, '')
-    .replace(/```/g, '')
-    .trim()
+      const result = PaperSchema.safeParse(parsed)
+      if (!result.success) {
+        console.error(`❌ Zod validation failed on attempt ${attempt}:`, result.error.flatten())
+        if (attempt === maxRetries) throw new Error('LLM response did not match expected schema after all retries')
+        continue
+      }
 
-  let parsed: any
-  try {
-    parsed = JSON.parse(cleaned)
-  } catch (err) {
-    console.error('❌ JSON parse failed:', cleaned.substring(0, 200))
-    throw new Error('LLM returned invalid JSON')
+      console.log('✅ LLM response validated successfully')
+      return result.data
+
+    } catch (err: any) {
+      if (attempt === maxRetries) throw err
+      console.log(`⚠️ Attempt ${attempt} failed, retrying...`)
+    }
   }
 
-  const result = PaperSchema.safeParse(parsed)
-  if (!result.success) {
-    console.error('❌ Zod validation failed:', result.error.flatten())
-console.error('❌ Raw parsed response:', JSON.stringify(parsed, null, 2))
-    throw new Error('LLM response did not match expected schema')
-  }
-
-  console.log('✅ LLM response validated successfully')
-  return result.data
+  throw new Error('Failed to generate question paper after all retries')
 }
