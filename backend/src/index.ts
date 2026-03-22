@@ -14,7 +14,7 @@ const httpServer = createServer(app)
 
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
-  'http://localhost:3000',
+  'http://localhost:3000', 'https://veda-ai-git-main-mohit-git1s-projects.vercel.app',
 ]
 
 export const io = new Server(httpServer, {
