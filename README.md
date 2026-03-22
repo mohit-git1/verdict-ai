@@ -10,7 +10,9 @@
 > ⚠️ **Note:** Backend is hosted on Render free tier. First request may take 30-60 seconds to wake up from sleep. Subsequent requests are fast. This is a free tier limitation, not a bug.
 
 ---
+> 💡 **Quick Tip:** If the page stops loading or gets stuck for more than 30 seconds, simply refresh the page. Your assignment is saved and will continue generating in the background.
 
+---
 ## 🧠 Architecture Overview
 ```
 Teacher fills form
