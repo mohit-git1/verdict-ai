@@ -61,9 +61,7 @@ export const assignmentsApi = {
     api.get<{ success: boolean; data: { assignment: Assignment; result: Result | null } }>(`/assignments/${id}`),
 
   create: (formData: FormData) =>
-    api.post<{ success: boolean; data: Assignment }>('/assignments', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
+    api.post<{ success: boolean; data: Assignment }>('/assignments', formData),
 
   delete: (id: string) => api.delete(`/assignments/${id}`),
 
