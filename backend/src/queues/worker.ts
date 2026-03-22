@@ -21,9 +21,11 @@ const getRedisConnection = () => {
 }
 
 // MongoDB
-mongoose.connect(process.env.MONGODB_URI!)
-  .then(() => console.log('✅ Worker: MongoDB connected'))
-  .catch(err => console.error('❌ Worker: MongoDB error:', err))
+if (process.env.NODE_ENV !== 'production') {
+  mongoose.connect(process.env.MONGODB_URI!)
+    .then(() => console.log('✅ Worker: MongoDB connected'))
+    .catch(err => console.error('❌ Worker: MongoDB error:', err))
+}
 
 async function notifyFrontend(assignmentId: string, event: string, data: any) {
   try {
