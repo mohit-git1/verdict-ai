@@ -71,6 +71,7 @@ export async function generateQuestionPaper(prompt: string): Promise<GeneratedPa
   const result = PaperSchema.safeParse(parsed)
   if (!result.success) {
     console.error('❌ Zod validation failed:', result.error.flatten())
+console.error('❌ Raw parsed response:', JSON.stringify(parsed, null, 2))
     throw new Error('LLM response did not match expected schema')
   }
 
