@@ -53,7 +53,14 @@ router.post('/', upload.single('file'), async (req: Request, res: Response) => {
     let fileName: string | undefined
     if (req.file) {
       fileName = req.file.originalname
-      fileContent = req.file.buffer.toString('utf-8')
+      // Only store text files, skip binary files like images
+const mimeType = req.file.mimetype
+if (mimeType === 'text/plain') {
+  fileContent = req.file.buffer.toString('utf-8')
+} else {
+  // For images/PDFs just store the filename, not the binary content
+  fileContent = undefined
+}
     }
 
     const assignment = new Assignment({
