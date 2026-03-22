@@ -194,7 +194,8 @@ export default function AssignmentsPage() {
             {filtered.map((assignment) => (
               <div 
                 key={assignment._id} 
-                className="bg-white rounded-2xl border border-gray-200 p-5 relative cursor-pointer"
+                onClick={() => router.push(`/assignments/${assignment._id}`)}
+                className="bg-white rounded-2xl border border-gray-200 p-5 relative cursor-pointer hover:border-gray-300 transition-colors"
                 style={{ 
                   boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
                   minHeight: '120px'

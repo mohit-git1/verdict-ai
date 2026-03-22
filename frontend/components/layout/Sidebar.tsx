@@ -33,7 +33,10 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
       >
         {/* Logo */}
         <div className="px-5 pt-8 pb-6">
-          <div className="flex items-center gap-3">
+          <div 
+            onClick={() => router.push('/')}
+            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+          >
             <img
               src="/VedaAI.png"
               alt="VedaAI"
@@ -125,6 +128,29 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
 
         {/* Bottom Section */}
         <div className="px-3 pb-5 mt-auto space-y-1">
+          {/* Profile Card */}
+          <div 
+            onClick={() => { router.push('/settings'); onMobileClose?.(); }}
+            className="flex items-center gap-3 px-3 py-3 bg-gray-50 rounded-2xl mb-2 cursor-pointer hover:bg-gray-100 transition-colors"
+          >
+            <div
+              className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center"
+              style={{ background: avatar ? 'transparent' : 'linear-gradient(135deg, #E8431C, #FF6B35)' }}
+            >
+              {avatar ? (
+                <img src={avatar} alt={name} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-sm font-bold text-white">
+                  {name.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[13px] font-bold text-gray-900 truncate">{name}</p>
+              <p className="text-[11px] text-gray-500 truncate">{schoolName}</p>
+            </div>
+          </div>
+
           <Link
             href="/settings"
             onClick={onMobileClose}
@@ -142,26 +168,6 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
             </span>
             Settings
           </Link>
-
-          {/* School Card */}
-          <div className="flex items-center gap-3 px-3 py-3 bg-gray-50 rounded-2xl mt-2">
-            <div
-              className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center"
-              style={{ background: avatar ? 'transparent' : 'linear-gradient(135deg, #E8431C, #FF6B35)' }}
-            >
-              {avatar ? (
-                <img src={avatar} alt={name} className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-sm font-bold text-white">
-                  {schoolName.charAt(0).toUpperCase()}
-                </span>
-              )}
-            </div>
-            <div className="min-w-0">
-              <p className="text-[13px] font-bold text-gray-900 truncate">{schoolName}</p>
-              <p className="text-[11px] text-gray-500 truncate">{city}</p>
-            </div>
-          </div>
         </div>
       </aside>
 

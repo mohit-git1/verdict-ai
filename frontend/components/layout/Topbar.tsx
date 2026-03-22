@@ -137,7 +137,10 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
       {/* Mobile Topbar */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-20 px-3 pt-3">
         <div className="flex items-center justify-between px-4 h-14 bg-white rounded-2xl shadow-sm">
-          <div className="flex items-center gap-2">
+          <div 
+            onClick={() => router.push('/')} 
+            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+          >
             <img src="/VedaAI.png" alt="VedaAI" width={32} height={32} style={{ borderRadius: '22%' }} />
             <span className="font-bold text-[16px] text-gray-900">VedaAI</span>
           </div>
