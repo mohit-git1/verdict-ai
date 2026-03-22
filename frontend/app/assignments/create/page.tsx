@@ -89,32 +89,35 @@ export default function CreateAssignmentPage() {
   }
 
   const handleSubmit = async () => {
-    if (!validate()) return
-    setSubmitting(true)
-    try {
-      const formData = new FormData()
-      formData.append('title', title)
-      formData.append('subject', subject || 'General')
-      formData.append('dueDate', dueDate)
-      formData.append('questionTypes', JSON.stringify(questionTypes.map(q => ({
-        type: q.type, numQuestions: q.numQuestions, marks: q.marks
-      }))))
-      formData.append('additionalInstructions', additionalInstructions)
-      if (file) formData.append('file', file)
+  if (!validate()) return
+  setSubmitting(true)
+  try {
+    const formData = new FormData()
+    formData.append('title', title)
+    formData.append('subject', subject || 'General')
+    formData.append('dueDate', dueDate)
+    formData.append('questionTypes', JSON.stringify(questionTypes.map(q => ({
+      type: q.type, numQuestions: q.numQuestions, marks: q.marks
+    }))))
+    formData.append('additionalInstructions', additionalInstructions)
+    if (file && file.type === 'text/plain') formData.append('file', file)
 
-      const res = await assignmentsApi.create(formData)
-      addAssignment(res.data.data)
-
-      // Set generating BEFORE navigating so output page shows spinner immediately
-      setGenerating(true)
-
-      router.push(`/assignments/${res.data.data._id}`)
-    } catch (err: any) {
-      setErrors({ submit: err?.response?.data?.error || 'Something went wrong' })
-    } finally {
-      setSubmitting(false)
+    const res = await assignmentsApi.create(formData)
+    addAssignment(res.data.data)
+    setGenerating(true)
+    router.push(`/assignments/${res.data.data._id}`)
+  } catch (err: any) {
+    // If timeout — backend might still be processing
+    // Try to find the assignment that was just created
+    if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+      setErrors({ submit: 'Server is waking up, please try again in 30 seconds...' })
+    } else {
+      setErrors({ submit: err?.response?.data?.error || 'Something went wrong. Please try again.' })
     }
+  } finally {
+    setSubmitting(false)
   }
+}
 
   return (
     <AppShell showBack title="Assignment">
