@@ -50,6 +50,7 @@ const worker = new Worker('assignment-generation', async (job) => {
     assignment.status = 'processing'
     await assignment.save()
     await notifyFrontend(assignmentId, 'status:update', { status: 'processing' })
+    await notifyFrontend(assignmentId, 'generation:progress', { id: assignmentId, message: 'Starting generation...' })
 
     const prompt = buildPrompt({
       subject: assignment.subject,
@@ -59,7 +60,9 @@ const worker = new Worker('assignment-generation', async (job) => {
       fileContent: assignment.fileContent
     })
 
-    const paperData = await generateQuestionPaper(prompt)
+    const paperData = await generateQuestionPaper(prompt, (msg) => {
+      notifyFrontend(assignmentId, 'generation:progress', { id: assignmentId, message: msg }).catch(console.error)
+    })
 
     const result = new Result({
       assignmentId: assignment._id,

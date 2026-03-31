@@ -8,6 +8,7 @@ interface AssessmentStore {
   isLoading: boolean
   isGenerating: boolean
   error: string | null
+  progressMessage: string
 
   setAssessments: (a: Assessment[]) => void
   addAssessment: (a: Assessment) => void
@@ -18,6 +19,7 @@ interface AssessmentStore {
   setLoading: (v: boolean) => void
   setGenerating: (v: boolean) => void
   setError: (e: string | null) => void
+  setProgressMessage: (msg: string) => void
 }
 
 import { persist } from 'zustand/middleware'
@@ -31,6 +33,7 @@ export const useAssessmentStore = create<AssessmentStore>()(
       isLoading: false,
       isGenerating: false,
       error: null,
+      progressMessage: 'Starting generation...',
 
       setAssessments: (assignments) => set({ assignments }),
       addAssessment: (assignment) =>
@@ -54,6 +57,7 @@ export const useAssessmentStore = create<AssessmentStore>()(
       setLoading: (isLoading) => set({ isLoading }),
       setGenerating: (isGenerating) => set({ isGenerating }),
       setError: (error) => set({ error }),
+      setProgressMessage: (progressMessage) => set({ progressMessage }),
     }),
     {
       name: 'veda-assignment-store',

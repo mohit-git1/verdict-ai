@@ -38,13 +38,14 @@ const PaperSchema = z.object({
 
 export type GeneratedPaper = z.infer<typeof PaperSchema>
 
-export async function generateQuestionPaper(prompt: string): Promise<GeneratedPaper> {
+export async function generateQuestionPaper(prompt: string, onProgress?: (msg: string) => void): Promise<GeneratedPaper> {
   const maxRetries = 3
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     console.log(`🤖 Calling NVIDIA LLM... (attempt ${attempt}/${maxRetries})`)
 
     try {
+      onProgress?.('AI is writing your questions...')
       const completion = await client.chat.completions.create({
         model: 'meta/llama-3.1-8b-instruct',
         messages: [
@@ -65,10 +66,11 @@ difficulty must be exactly one of: "easy", "medium", "hard" (lowercase).`
         ],
         temperature: attempt === 1 ? 0.7 : 0.3,
         max_tokens: 4000
-      })
+      }, { timeout: 55000 })
 
       const rawText = completion.choices[0]?.message?.content || ''
       console.log('🤖 Raw LLM response received, parsing...')
+      onProgress?.('Validating and formatting...')
 
       let cleaned = rawText
         .replace(/```json/gi, '')

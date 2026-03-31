@@ -7,7 +7,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 let socket: Socket | null = null
 
 export function useWebSocket(assignmentId?: string) {
-  const { updateAssessmentStatus, setGenerating } = useAssessmentStore()
+  const { updateAssessmentStatus, setGenerating, setProgressMessage } = useAssessmentStore()
 
   useEffect(() => {
     if (!socket) {
@@ -36,10 +36,17 @@ export function useWebSocket(assignmentId?: string) {
       setGenerating(false)
     })
 
+    socket.on('generation:progress', (data: { id: string, message: string }) => {
+      if (data.id === assignmentId) {
+        setProgressMessage(data.message)
+      }
+    })
+
     return () => {
       socket?.off('status:update')
       socket?.off('generation:complete')
       socket?.off('generation:failed')
+      socket?.off('generation:progress')
     }
   }, [assignmentId])
 }

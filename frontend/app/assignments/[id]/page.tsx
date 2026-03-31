@@ -35,7 +35,8 @@ export default function AssessmentOutputPage() {
     setCurrentAssessment,
     setCurrentResult,
     isGenerating,
-    setGenerating
+    setGenerating,
+    progressMessage
   } = useAssessmentStore()
   const { name } = useUserStore()
   const [loading, setLoading] = useState(true)
@@ -143,7 +144,7 @@ export default function AssessmentOutputPage() {
                   }} />
                 </div>
                 <p style={{ color: '#9CA3AF', fontSize: '13px', textAlign: 'center' }}>
-                  Preparing your assessment...
+                  {progressMessage}
                 </p>
               </div>
             ) : currentResult ? (
