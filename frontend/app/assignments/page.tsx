@@ -300,14 +300,6 @@ export default function AssessmentsPage() {
                     )}
                   </div>
                 </div>
-                <div className="flex items-center justify-between text-xs mt-4 pt-3 border-t border-gray-100">
-                  <span className="text-gray-500">
-                    <span className="font-semibold text-gray-700">Created on</span> : {formatDate(assignment.createdAt)}
-                  </span>
-                  <span className="text-gray-500">
-                    <span className="font-semibold text-gray-700">Deadline</span> : {formatDate(assignment.dueDate)}
-                  </span>
-                </div>
               </div>
             ))}
           </div>
