@@ -173,7 +173,7 @@ export default function SettingsPage() {
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Notifications</h2>
           <div className="space-y-1">
             {[
-              { label: 'Assignment Generated', desc: 'Notify when AI finishes generating', on: true },
+              { label: 'Assessment Generated', desc: 'Notify when AI finishes generating', on: true },
               { label: 'Generation Failed', desc: 'Alert when generation fails', on: true },
               { label: 'Weekly Summary', desc: 'Weekly report of assignments created', on: false },
             ].map((item) => (

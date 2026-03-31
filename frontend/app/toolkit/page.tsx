@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AppShell from '@/components/layout/AppShell'
-import { useAssignmentStore } from '@/store/assignmentStore'
+import { useAssessmentStore } from '@/store/assignmentStore'
 import { generateToolkitAI } from './actions'
 
 const TOOLS = [
@@ -16,7 +16,7 @@ const TOOLS = [
 
 export default function ToolkitPage() {
   const router = useRouter()
-  const { assignments } = useAssignmentStore()
+  const { assignments } = useAssessmentStore()
   const [activeTool, setActiveTool] = useState<any>(null)
   const [inputs, setInputs] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
@@ -32,7 +32,7 @@ export default function ToolkitPage() {
     if (activeTool.id === 'quiz') return `Create a quiz about ${inputs.topic || 'General Science'} with ${inputs.count || '5'} questions. Difficulty: ${inputs.diff || 'Medium'}.`
     if (activeTool.id === 'lesson') return `Create a detailed lesson plan for Grade ${inputs.grade || '10'}, Subject: ${inputs.subject || 'Math'}, Topic: ${inputs.topic || 'Algebra'}, Duration: ${inputs.duration || '60 mins'}.`
     if (activeTool.id === 'grade') return `Create a grading rubric for assignment type: ${inputs.type || 'Essay'}. Total Marks: ${inputs.marks || '100'}. Criteria: ${inputs.criteria || 'Standard'}.`
-    if (activeTool.id === 'doubt') return `A student has a doubt: "${inputs.question || 'How does photosynthesis work?'}". Provide a clear, teacher-style explanation.`
+    if (activeTool.id === 'doubt') return `A candidate has a doubt: "${inputs.question || 'How does this skill gap work?'}". Provide a clear, professional explanation.`
     if (activeTool.id === 'summary') return `Summarize this text concisely: \n\n${inputs.text || 'Placeholder long text to summarize'}`
     return ''
   }
@@ -66,7 +66,7 @@ export default function ToolkitPage() {
     if (activeTool.id === 'bank') {
       return (
         <div className="space-y-4">
-          <p className="text-sm text-gray-500 mb-4">View your previously assigned question papers locally filtered here.</p>
+          <p className="text-sm text-gray-500 mb-4">View your previously assigned technical assessments locally filtered here.</p>
           {assignments.length > 0 ? (
             <div className="space-y-3">
               {assignments.map(a => (
@@ -79,7 +79,7 @@ export default function ToolkitPage() {
                     <span className="font-semibold text-sm text-gray-900 truncate">{a.title}</span>
                     <span className="text-xs text-gray-500 truncate">{a.subject} • {a.status}</span>
                   </div>
-                  <span className="text-[#E8431C] text-sm font-medium flex-shrink-0 group-hover:underline">View</span>
+                  <span className="text-[#2563EB] text-sm font-medium flex-shrink-0 group-hover:underline">View</span>
                 </div>
               ))}
             </div>
@@ -116,7 +116,7 @@ export default function ToolkitPage() {
     if (activeTool.id === 'grade') return (
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <div><label className="block text-xs font-semibold text-gray-700 mb-1">Assignment Type</label><input type="text" onChange={e=>setInputs({...inputs, type: e.target.value})} className="w-full text-sm p-2 border border-gray-200 rounded-lg outline-none" placeholder="e.g. Research Paper" /></div>
+          <div><label className="block text-xs font-semibold text-gray-700 mb-1">Assessment Type</label><input type="text" onChange={e=>setInputs({...inputs, type: e.target.value})} className="w-full text-sm p-2 border border-gray-200 rounded-lg outline-none" placeholder="e.g. Research Paper" /></div>
           <div><label className="block text-xs font-semibold text-gray-700 mb-1">Total Marks</label><input type="number" onChange={e=>setInputs({...inputs, marks: e.target.value})} className="w-full text-sm p-2 border border-gray-200 rounded-lg outline-none" placeholder="100" /></div>
         </div>
         <div><label className="block text-xs font-semibold text-gray-700 mb-1">Grading Criteria</label><input type="text" onChange={e=>setInputs({...inputs, criteria: e.target.value})} className="w-full text-sm p-2 border border-gray-200 rounded-lg outline-none" placeholder="e.g. Grammar, Creativity..." /></div>

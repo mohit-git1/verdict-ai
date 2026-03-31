@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDropzone } from 'react-dropzone'
 import AppShell from '@/components/layout/AppShell'
-import { useAssignmentStore } from '@/store/assignmentStore'
+import { useAssessmentStore } from '@/store/assignmentStore'
 import { assignmentsApi } from '@/lib/api'
 
 interface QuestionTypeRow {
@@ -42,7 +42,7 @@ const TECH_STACK = [
 
 export default function CreateAssessmentPage() {
   const router = useRouter()
-  const { addAssignment, setGenerating } = useAssignmentStore()
+  const { addAssessment, setGenerating } = useAssessmentStore()
 
   const [jobTitle, setJobTitle] = useState('')
   const [companyName, setCompanyName] = useState('')
@@ -133,7 +133,7 @@ export default function CreateAssessmentPage() {
       }
 
       const res = await assignmentsApi.create(formData)
-      addAssignment(res.data.data)
+      addAssessment(res.data.data)
       setGenerating(true)
       router.push(`/assignments/${res.data.data._id}`)
     } catch (err: any) {

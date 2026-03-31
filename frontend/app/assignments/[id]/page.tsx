@@ -2,8 +2,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import AppShell from '@/components/layout/AppShell'
-import { useAssignmentStore } from '@/store/assignmentStore'
-import { assignmentsApi, Assignment, Result } from '@/lib/api'
+import { useAssessmentStore } from '@/store/assignmentStore'
+import { assignmentsApi, Assessment, Result } from '@/lib/api'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import { useUserStore } from '@/store/userStore'
 
@@ -26,17 +26,17 @@ const DifficultyBadge = ({ difficulty }: { difficulty: string }) => {
   )
 }
 
-export default function AssignmentOutputPage() {
+export default function AssessmentOutputPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const {
-    currentAssignment,
+    currentAssessment,
     currentResult,
-    setCurrentAssignment,
+    setCurrentAssessment,
     setCurrentResult,
     isGenerating,
     setGenerating
-  } = useAssignmentStore()
+  } = useAssessmentStore()
   const { name } = useUserStore()
   const [loading, setLoading] = useState(true)
   const [regenerating, setRegenerating] = useState(false)
@@ -51,7 +51,7 @@ export default function AssignmentOutputPage() {
       const assignment = res.data.data.assignment
       const result = res.data.data.result
 
-      setCurrentAssignment(assignment)
+      setCurrentAssessment(assignment)
       setCurrentResult(result)
 
       if (assignment.status === 'completed' || assignment.status === 'failed') {
@@ -118,7 +118,7 @@ export default function AssignmentOutputPage() {
   }
 
   return (
-    <AppShell showBack title="Create New" mobileTitle="Assignments">
+    <AppShell showBack title="Create New" mobileTitle="Assessments">
       <div className="max-w-[720px] mx-auto pb-[80px]">
 
         {/* AI Message Bubble */}
@@ -168,7 +168,7 @@ export default function AssignmentOutputPage() {
               </>
             ) : (
               <p className="text-[15px] pb-[20px] font-medium text-white">
-                {currentAssignment?.status === 'failed'
+                {currentAssessment?.status === 'failed'
                   ? 'Generation failed. Please try regenerating.'
                   : 'Starting generation...'}
               </p>
@@ -176,7 +176,7 @@ export default function AssignmentOutputPage() {
           </div>
         </div>
 
-        {/* Question Paper */}
+        {/* Assessment Output */}
         {currentResult && (
           <div
             ref={paperRef}

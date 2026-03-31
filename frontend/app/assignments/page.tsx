@@ -2,20 +2,20 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AppShell from '@/components/layout/AppShell'
-import { useAssignmentStore } from '@/store/assignmentStore'
-import { assignmentsApi, Assignment } from '@/lib/api'
+import { useAssessmentStore } from '@/store/assignmentStore'
+import { assignmentsApi, Assessment } from '@/lib/api'
 import { format } from 'date-fns'
 
-export default function AssignmentsPage() {
+export default function AssessmentsPage() {
   const router = useRouter()
-  const { assignments, setAssignments, removeAssignment } = useAssignmentStore()
+  const { assignments, setAssessments, removeAssessment } = useAssessmentStore()
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [openMenu, setOpenMenu] = useState<string | null>(null)
 
   useEffect(() => {
     assignmentsApi.getAll()
-      .then((res) => setAssignments(res.data.data))
+      .then((res) => setAssessments(res.data.data))
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
@@ -28,7 +28,7 @@ export default function AssignmentsPage() {
     const interval = setInterval(async () => {
       try {
         const res = await assignmentsApi.getAll()
-        setAssignments(res.data.data)
+        setAssessments(res.data.data)
       } catch (err) {
         console.error(err)
       }
@@ -40,7 +40,7 @@ export default function AssignmentsPage() {
   const handleDelete = async (id: string) => {
     try {
       await assignmentsApi.delete(id)
-      removeAssignment(id)
+      removeAssessment(id)
       setOpenMenu(null)
     } catch (err) {
       console.error('Delete failed:', err)
@@ -55,7 +55,7 @@ export default function AssignmentsPage() {
     try { return format(new Date(d), 'dd-MM-yyyy') } catch { return d }
   }
 
-  const StatusBadge = ({ status }: { status: Assignment['status'] }) => {
+  const StatusBadge = ({ status }: { status: Assessment['status'] }) => {
     const map = {
       pending: {
         label: 'Pending',
@@ -194,7 +194,7 @@ export default function AssignmentsPage() {
               style={{ background: '#DBEAFE', color: '#1D4ED8' }}
             >
               <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse flex-shrink-0" />
-              AI is generating your question paper... This may take up to 60 seconds. You can wait here or come back later.
+              AI is generating your assessment... This may take up to 60 seconds. You can wait here or come back later.
             </div>
           )}
 

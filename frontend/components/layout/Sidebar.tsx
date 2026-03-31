@@ -2,7 +2,7 @@
 import { useUserStore } from '@/store/userStore'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useAssignmentStore } from '@/store/assignmentStore'
+import { useAssessmentStore } from '@/store/assignmentStore'
 
 interface SidebarProps {
   mobileOpen?: boolean
@@ -12,7 +12,7 @@ interface SidebarProps {
 export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const { assignments } = useAssignmentStore()
+  const { assignments } = useAssessmentStore()
   const { name, avatar, schoolName, city } = useUserStore()
   const assignmentCount = assignments.length
 
@@ -20,7 +20,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
     { label: 'Home', href: '/', icon: '/icons/home.svg' },
     { label: 'My Team', href: '/groups', icon: '/icons/myGroups.svg' },
     { label: 'Assessments', href: '/assignments', icon: '/icons/assignment.svg' },
-    { label: "AI Toolkit", href: '/toolkit', icon: '/icons/aiTeacherToolkit.svg' },
+    { label: "AI Toolkit", href: '/toolkit', icon: '/icons/aiHiringToolkit.svg' },
     { label: 'My Library', href: '/library', icon: '/icons/myLibrary.svg' },
   ]
 
@@ -38,8 +38,8 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           >
             <img
-              src="/VedaAI.png"
-              alt="VedaAI"
+              src="/VerdictAI.png"
+              alt="VerdictAI"
               width={42}
               height={42}
               style={{ borderRadius: '22%' }}
@@ -48,7 +48,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
           </div>
         </div>
 
-        {/* Create Assignment Button */}
+        {/* Create Assessment Button */}
         <div className="px-4 mb-6">
           <button
             onClick={() => {
@@ -180,7 +180,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
           { label: 'Home', href: '/', icon: '/icons/home.svg' },
           { label: 'My Team', href: '/groups', icon: '/icons/myGroups.svg' },
           { label: 'Library', href: '/library', icon: '/icons/myLibrary.svg' },
-          { label: 'AI Toolkit', href: '/toolkit', icon: '/icons/aiTeacherToolkit.svg' },
+          { label: 'AI Toolkit', href: '/toolkit', icon: '/icons/aiHiringToolkit.svg' },
         ].map((item) => {
           const active = pathname === item.href
           return (
