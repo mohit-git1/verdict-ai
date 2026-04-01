@@ -96,6 +96,7 @@ const worker = new Worker('assignment-generation', async (job) => {
 
 }, {
   connection: getRedisConnection(),
+  prefix: process.env.QUEUE_PREFIX || 'prod',
   concurrency: 2
 })
 

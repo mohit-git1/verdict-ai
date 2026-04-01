@@ -68,36 +68,39 @@ difficulty must be exactly one of: "easy", "medium", "hard" (lowercase).`
         max_tokens: 4000
       }, { timeout: 55000 })
 
-      const rawText = completion.choices[0]?.message?.content || ''
+      // LLMs often wrap JSON in markdown code blocks — strip them first
+      let raw = completion.choices[0]?.message?.content || ''
       console.log('🤖 Raw LLM response received, parsing...')
       onProgress?.('Validating and formatting...')
-
-      let cleaned = rawText
-        .replace(/```json/gi, '')
-        .replace(/```/g, '')
-        .trim()
-
-      const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        cleaned = jsonMatch[0]
+      
+      // Strip markdown code fences if present
+      raw = raw.replace(/```json\n?/gi, '').replace(/```\n?/gi, '').trim()
+      
+      // Find the first { and last } to extract just the JSON object
+      const start = raw.indexOf('{')
+      const end = raw.lastIndexOf('}')
+      if (start === -1 || end === -1) {
+        throw new Error('No JSON object found in LLM response')
       }
-
-      let parsed: any
+      raw = raw.slice(start, end + 1)
+      
+      // Now parse
+      let parsed
       try {
-        parsed = JSON.parse(cleaned)
-      } catch (err) {
-        console.error(`❌ JSON parse failed on attempt ${attempt}:`, cleaned.substring(0, 200))
-        if (attempt === maxRetries) throw new Error('LLM returned invalid JSON after all retries')
-        continue
+        parsed = JSON.parse(raw)
+      } catch (e) {
+        throw new Error('LLM response was not valid JSON: ' + raw.slice(0, 200))
       }
-
+      
+      // Validate with Zod
       const result = PaperSchema.safeParse(parsed)
       if (!result.success) {
-        console.error(`❌ Zod validation failed on attempt ${attempt}:`, result.error.flatten())
-        if (attempt === maxRetries) throw new Error('LLM response did not match expected schema after all retries')
-        continue
+        // Log exactly what field failed so we can fix it
+        console.error('Zod validation failed:', JSON.stringify(result.error.issues, null, 2))
+        console.error('LLM returned:', JSON.stringify(parsed, null, 2).slice(0, 500))
+        throw new Error('LLM response did not match expected schema')
       }
-
+      
       console.log('✅ LLM response validated successfully')
       return result.data
 
