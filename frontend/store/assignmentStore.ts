@@ -60,7 +60,7 @@ export const useAssessmentStore = create<AssessmentStore>()(
       setProgressMessage: (progressMessage) => set({ progressMessage }),
     }),
     {
-      name: 'veda-assignment-store',
+      name: 'verdict-assignment-store',
       partialize: (state) => ({ assignments: state.assignments }),
     }
   )

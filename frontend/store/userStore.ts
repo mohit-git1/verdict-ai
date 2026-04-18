@@ -30,6 +30,6 @@ export const useUserStore = create<UserStore>()(
       setCity: (city) => set({ city }),
       setAvatar: (avatar) => set({ avatar }),
     }),
-    { name: 'veda-user-store' }
+    { name: 'verdict-user-store' }
   )
 )

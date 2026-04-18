@@ -5,8 +5,8 @@
 > - If generation is stuck for more than 30 seconds, refresh the page. Your assessment is saved and generating in the background.
 
 ## 🔗 Live Demo
-- **Frontend:** https://veda-ai-iota.vercel.app
-- **Backend:** https://veda-ai-backend-okmj.onrender.com/health
+- **Frontend:** https://verdict-ai-iota.vercel.app
+- **Backend:** https://verdict-ai-backend-okmj.onrender.com/health
 
 ## 💡 What is VerdictAI?
 VerdictAI helps HR teams and engineering managers generate role-specific technical assessments in seconds. Input a job title, required skills, and experience level — the AI generates a complete assessment paper with questions, difficulty ratings, and answer keys.
