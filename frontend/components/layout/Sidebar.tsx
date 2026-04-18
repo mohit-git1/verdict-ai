@@ -2,7 +2,7 @@
 import { useUserStore } from '@/store/userStore'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useAssignmentStore } from '@/store/assignmentStore'
+import { useAssessmentStore } from '@/store/assignmentStore'
 
 interface SidebarProps {
   mobileOpen?: boolean
@@ -12,15 +12,15 @@ interface SidebarProps {
 export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const { assignments } = useAssignmentStore()
+  const { assignments } = useAssessmentStore()
   const { name, avatar, schoolName, city } = useUserStore()
   const assignmentCount = assignments.length
 
   const navItems = [
     { label: 'Home', href: '/', icon: '/icons/home.svg' },
-    { label: 'My Groups', href: '/groups', icon: '/icons/myGroups.svg' },
-    { label: 'Assignments', href: '/assignments', icon: '/icons/assignment.svg' },
-    { label: "AI Teacher's Toolkit", href: '/toolkit', icon: '/icons/aiTeacherToolkit.svg' },
+    { label: 'My Team', href: '/groups', icon: '/icons/myGroups.svg' },
+    { label: 'Assessments', href: '/assignments', icon: '/icons/assignment.svg' },
+    { label: "AI Toolkit", href: '/toolkit', icon: '/icons/aiHiringToolkit.svg' },
     { label: 'My Library', href: '/library', icon: '/icons/myLibrary.svg' },
   ]
 
@@ -38,17 +38,17 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           >
             <img
-              src="/VedaAI.png"
-              alt="VedaAI"
+              src="/VerdictAI.png"
+              alt="VerdictAI"
               width={42}
               height={42}
               style={{ borderRadius: '22%' }}
             />
-            <span className="font-extrabold text-[18px] tracking-tight text-gray-900">VedaAI</span>
+            <span className="font-extrabold text-[18px] tracking-tight text-gray-900">VerdictAI</span>
           </div>
         </div>
 
-        {/* Create Assignment Button */}
+        {/* Create Assessment Button */}
         <div className="px-4 mb-6">
           <button
             onClick={() => {
@@ -57,11 +57,11 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
             }}
             className="w-full flex items-center justify-center gap-2 text-white text-[14px] font-medium transition-all hover:opacity-90 active:scale-95"
             style={{
-              background: '#2A2A2A',
-              border: '2.5px solid #E8431C',
+              background: '#111111',
+              border: '2.5px solid #2563EB',
               borderRadius: '999px',
               height: '44px',
-              boxShadow: '0 0 0 1px rgba(232,67,28,0.4)',
+              boxShadow: '0 0 0 1px rgba(37,99,235,0.4)',
             }}
           >
             <div className="relative flex items-center justify-center w-5 h-5">
@@ -72,7 +72,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
                 <path d="M12 2C12 2 13.5 8.5 15 10C16.5 11.5 22 12 22 12C22 12 16.5 12.5 15 14C13.5 15.5 12 22 12 22C12 22 10.5 15.5 9 14C7.5 12.5 2 12 2 12C2 12 7.5 11.5 9 10C10.5 8.5 12 2 12 2Z" />
               </svg>
             </div>
-            Create Assignment
+            ✦ Create Assessment
           </button>
         </div>
 
@@ -113,10 +113,10 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
                   }}
                 />
                 <span className="flex-1">{item.label}</span>
-                {item.label === 'Assignments' && assignmentCount > 0 && (
+                {item.label === 'Assessments' && assignmentCount > 0 && (
                   <span
                     className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white min-w-[20px] text-center"
-                    style={{ background: '#E8431C' }}
+                    style={{ background: '#2563EB' }}
                   >
                     {assignmentCount}
                   </span>
@@ -135,7 +135,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
           >
             <div
               className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center"
-              style={{ background: avatar ? 'transparent' : 'linear-gradient(135deg, #E8431C, #FF6B35)' }}
+              style={{ background: avatar ? 'transparent' : 'linear-gradient(135deg, #2563EB, #3B82F6)' }}
             >
               {avatar ? (
                 <img src={avatar} alt={name} className="w-full h-full object-cover" />
@@ -178,9 +178,9 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
       >
         {[
           { label: 'Home', href: '/', icon: '/icons/home.svg' },
-          { label: 'My Groups', href: '/groups', icon: '/icons/myGroups.svg' },
+          { label: 'My Team', href: '/groups', icon: '/icons/myGroups.svg' },
           { label: 'Library', href: '/library', icon: '/icons/myLibrary.svg' },
-          { label: 'AI Toolkit', href: '/toolkit', icon: '/icons/aiTeacherToolkit.svg' },
+          { label: 'AI Toolkit', href: '/toolkit', icon: '/icons/aiHiringToolkit.svg' },
         ].map((item) => {
           const active = pathname === item.href
           return (

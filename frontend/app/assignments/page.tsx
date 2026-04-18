@@ -2,20 +2,20 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AppShell from '@/components/layout/AppShell'
-import { useAssignmentStore } from '@/store/assignmentStore'
-import { assignmentsApi, Assignment } from '@/lib/api'
+import { useAssessmentStore } from '@/store/assignmentStore'
+import { assignmentsApi, Assessment } from '@/lib/api'
 import { format } from 'date-fns'
 
-export default function AssignmentsPage() {
+export default function AssessmentsPage() {
   const router = useRouter()
-  const { assignments, setAssignments, removeAssignment } = useAssignmentStore()
+  const { assignments, setAssessments, removeAssessment } = useAssessmentStore()
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [openMenu, setOpenMenu] = useState<string | null>(null)
 
   useEffect(() => {
     assignmentsApi.getAll()
-      .then((res) => setAssignments(res.data.data))
+      .then((res) => setAssessments(res.data.data))
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
@@ -28,7 +28,7 @@ export default function AssignmentsPage() {
     const interval = setInterval(async () => {
       try {
         const res = await assignmentsApi.getAll()
-        setAssignments(res.data.data)
+        setAssessments(res.data.data)
       } catch (err) {
         console.error(err)
       }
@@ -40,7 +40,7 @@ export default function AssignmentsPage() {
   const handleDelete = async (id: string) => {
     try {
       await assignmentsApi.delete(id)
-      removeAssignment(id)
+      removeAssessment(id)
       setOpenMenu(null)
     } catch (err) {
       console.error('Delete failed:', err)
@@ -55,7 +55,7 @@ export default function AssignmentsPage() {
     try { return format(new Date(d), 'dd-MM-yyyy') } catch { return d }
   }
 
-  const StatusBadge = ({ status }: { status: Assignment['status'] }) => {
+  const StatusBadge = ({ status }: { status: Assessment['status'] }) => {
     const map = {
       pending: {
         label: 'Pending',
@@ -72,7 +72,7 @@ export default function AssignmentsPage() {
         pulse: true
       },
       completed: {
-        label: '✓ Ready',
+        label: '✓ Generated',
         bg: '#DCFCE7',
         color: '#16A34A',
         dot: '#22C55E',
@@ -103,7 +103,7 @@ export default function AssignmentsPage() {
 
   if (loading) {
     return (
-      <AppShell title="Assignment">
+      <AppShell title="Assessment">
         <div className="flex items-center justify-center h-64">
           <div className="w-8 h-8 border-2 border-gray-200 border-t-gray-800 rounded-full animate-spin" />
         </div>
@@ -112,7 +112,7 @@ export default function AssignmentsPage() {
   }
 
   return (
-    <AppShell title="Assignment">
+    <AppShell title="Assessment">
       {assignments.length === 0 ? (
         /* ── EMPTY STATE ── */
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] text-center px-4">
@@ -158,9 +158,9 @@ export default function AssignmentsPage() {
             </svg>
           </div>
 
-          <h2 className="text-[24px] font-bold text-[#111111] mb-[12px]">No assignments yet</h2>
+          <h2 className="text-[24px] font-bold text-[#111111] mb-[12px]">No assessments yet</h2>
           <p className="text-[16px] text-[#6B7280] max-w-[420px] leading-[1.6] text-center mx-auto mb-10 font-medium">
-            Create your first assignment to start collecting and grading student submissions. You can set up rubrics, define marking criteria, and let AI assist with grading.
+            Create your first assessment to start evaluating candidates. Generate role-specific technical tests powered by AI.
           </p>
           <button
             onClick={() => router.push('/assignments/create')}
@@ -173,7 +173,7 @@ export default function AssignmentsPage() {
             <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Create Your First Assignment
+            Create Your First Assessment
           </button>
         </div>
       ) : (
@@ -183,18 +183,32 @@ export default function AssignmentsPage() {
           <div className="mb-[24px]">
             <div className="flex items-center gap-[8px] mb-1">
               <div className="w-[8px] h-[8px] rounded-full bg-[#22C55E]"></div>
-              <h1 className="text-[18px] font-semibold text-[#111111]">Assignments</h1>
+              <h1 className="text-[18px] font-semibold text-[#111111]">Assessments</h1>
             </div>
-            <p className="text-[13px] text-[#6B7280] ml-[16px]">Manage and create assignments for your classes.</p>
+            <p className="text-[13px] text-[#6B7280] ml-[16px]">Manage and create assessments for your hiring pipeline</p>
           </div>
 
           {assignments.some(a => a.status === 'processing' || a.status === 'pending') && (
-            <div
-              className="flex items-center gap-3 px-4 py-3 rounded-xl mb-4 text-sm font-medium"
-              style={{ background: '#DBEAFE', color: '#1D4ED8' }}
-            >
-              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse flex-shrink-0" />
-              AI is generating your question paper... This may take up to 60 seconds. You can wait here or come back later.
+            <div className="w-full mb-4">
+              <div style={{
+                width: '100%',
+                background: '#1a1a1a',
+                borderRadius: '4px',
+                height: '8px',
+                overflow: 'hidden',
+                margin: '16px 0'
+              }}>
+                <div style={{
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #2563EB, #60a5fa)',
+                  borderRadius: '4px',
+                  animation: 'loadbar 1.8s ease-in-out infinite',
+                  width: '40%'
+                }} />
+              </div>
+              <p style={{ color: '#9CA3AF', fontSize: '13px', textAlign: 'center' }}>
+                Preparing your assessment...
+              </p>
             </div>
           )}
 
@@ -204,7 +218,7 @@ export default function AssignmentsPage() {
               style={{ background: '#DCFCE7', color: '#15803D' }}
             >
               <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-              ✓ Your question paper is ready! Click on the assignment to view it.
+              ✓ Your assessment is ready! Click on the assessment to view it.
             </div>
           )}
 
@@ -222,7 +236,7 @@ export default function AssignmentsPage() {
               </svg>
               <input
                 type="text"
-                placeholder="Search Assignment"
+                placeholder="Search Assessment"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-[36px] pr-[12px] h-[38px] bg-white border border-[#E5E7EB] rounded-lg text-[14px] text-[#111111] placeholder-[#9CA3AF] focus:outline-none focus:border-[#D1D5DB] transition-colors"
@@ -271,7 +285,7 @@ export default function AssignmentsPage() {
                           }}
                           className="w-full text-left px-4 py-2 text-[14px] text-[#374151] hover:bg-[#F9FAFB]"
                         >
-                          View Assignment
+                          View Assessment
                         </button>
                         <button
                           onClick={(e) => {
@@ -285,14 +299,6 @@ export default function AssignmentsPage() {
                       </div>
                     )}
                   </div>
-                </div>
-                <div className="flex items-center justify-between text-xs mt-4 pt-3 border-t border-gray-100">
-                  <span className="text-gray-500">
-                    <span className="font-semibold text-gray-700">Assigned on</span> : {formatDate(assignment.createdAt)}
-                  </span>
-                  <span className="text-gray-500">
-                    <span className="font-semibold text-gray-700">Due</span> : {formatDate(assignment.dueDate)}
-                  </span>
                 </div>
               </div>
             ))}
@@ -312,7 +318,7 @@ export default function AssignmentsPage() {
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
-              Create Assignment
+              Create Assessment
             </button>
           </div>
 
@@ -338,7 +344,7 @@ export default function AssignmentsPage() {
             boxShadow: '0 4px 16px rgba(0,0,0,0.15)'
           }}
         >
-          <svg width="22" height="22" fill="none" stroke="#E8431C" strokeWidth="2.5" viewBox="0 0 24 24">
+          <svg width="22" height="22" fill="none" stroke="#2563EB" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
         </button>

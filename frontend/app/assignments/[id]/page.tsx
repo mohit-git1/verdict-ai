@@ -2,8 +2,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import AppShell from '@/components/layout/AppShell'
-import { useAssignmentStore } from '@/store/assignmentStore'
-import { assignmentsApi, Assignment, Result } from '@/lib/api'
+import { useAssessmentStore } from '@/store/assignmentStore'
+import { assignmentsApi, Assessment, Result } from '@/lib/api'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import { useUserStore } from '@/store/userStore'
 
@@ -26,17 +26,18 @@ const DifficultyBadge = ({ difficulty }: { difficulty: string }) => {
   )
 }
 
-export default function AssignmentOutputPage() {
+export default function AssessmentOutputPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const {
-    currentAssignment,
+    currentAssessment,
     currentResult,
-    setCurrentAssignment,
+    setCurrentAssessment,
     setCurrentResult,
     isGenerating,
-    setGenerating
-  } = useAssignmentStore()
+    setGenerating,
+    progressMessage
+  } = useAssessmentStore()
   const { name } = useUserStore()
   const [loading, setLoading] = useState(true)
   const [regenerating, setRegenerating] = useState(false)
@@ -51,7 +52,7 @@ export default function AssignmentOutputPage() {
       const assignment = res.data.data.assignment
       const result = res.data.data.result
 
-      setCurrentAssignment(assignment)
+      setCurrentAssessment(assignment)
       setCurrentResult(result)
 
       if (assignment.status === 'completed' || assignment.status === 'failed') {
@@ -118,31 +119,38 @@ export default function AssignmentOutputPage() {
   }
 
   return (
-    <AppShell showBack title="Create New" mobileTitle="Assignments">
+    <AppShell showBack title="Create New" mobileTitle="Assessments">
       <div className="max-w-[720px] mx-auto pb-[80px]">
 
         {/* AI Message Bubble */}
         <div className="bg-[#262626] rounded-[24px] border border-[#333333] p-[24px] mb-[32px] flex flex-col items-start gap-[20px]">
           <div className="flex-1 w-full">
             {isGenerating ? (
-              <div className="flex items-center gap-[12px]">
-                <div className="flex gap-1.5">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="w-[6px] h-[6px] bg-[#9CA3AF] rounded-full animate-bounce"
-                      style={{ animationDelay: `${i * 0.15}s` }}
-                    />
-                  ))}
+              <div className="w-full">
+                <div style={{
+                  width: '100%',
+                  background: '#1a1a1a',
+                  borderRadius: '4px',
+                  height: '8px',
+                  overflow: 'hidden',
+                  margin: '16px 0'
+                }}>
+                  <div style={{
+                    height: '100%',
+                    background: 'linear-gradient(90deg, #2563EB, #60a5fa)',
+                    borderRadius: '4px',
+                    animation: 'loadbar 1.8s ease-in-out infinite',
+                    width: '40%'
+                  }} />
                 </div>
-                <p className="text-[15px] font-medium text-white pb-[20px]">
-                  Generating your question paper...
+                <p style={{ color: '#9CA3AF', fontSize: '13px', textAlign: 'center' }}>
+                  {progressMessage}
                 </p>
               </div>
             ) : currentResult ? (
               <>
                 <p className="text-[16px] text-white leading-[1.6] mb-[20px] font-medium tracking-tight">
-                  Certainly, {name ? name.split(' ')[0] : 'Lakshya'}! Here are customized Question Paper for your CBSE {currentResult.className || 'Grade 8'} {currentResult.subject || 'Science'} classes on the NCERT chapters:
+                  Here is the AI-generated technical assessment for the {currentResult.subject} role. Share this with your candidates:
                 </p>
                 <div className="flex flex-wrap items-center gap-[12px]">
                   <button
@@ -152,7 +160,7 @@ export default function AssignmentOutputPage() {
                     <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
-                    Download as PDF
+                    Download Assessment
                   </button>
                   <button
                     onClick={handleRegenerate}
@@ -168,7 +176,7 @@ export default function AssignmentOutputPage() {
               </>
             ) : (
               <p className="text-[15px] pb-[20px] font-medium text-white">
-                {currentAssignment?.status === 'failed'
+                {currentAssessment?.status === 'failed'
                   ? 'Generation failed. Please try regenerating.'
                   : 'Starting generation...'}
               </p>
@@ -176,7 +184,7 @@ export default function AssignmentOutputPage() {
           </div>
         </div>
 
-        {/* Question Paper */}
+        {/* Assessment Output */}
         {currentResult && (
           <div
             ref={paperRef}
@@ -186,8 +194,8 @@ export default function AssignmentOutputPage() {
             {/* School Header */}
             <div className="text-center mb-[16px] pb-[16px] border-b border-[#E5E7EB]">
               <h1 className="text-[15px] md:text-[17px] font-bold text-[#111111]">{currentResult.schoolName}</h1>
-              <p className="text-[14px] text-[#374151] mt-1">Subject: {currentResult.subject}</p>
-              <p className="text-[14px] text-[#374151]">Class: {currentResult.className}</p>
+              <p className="text-[14px] text-[#374151] mt-1">Role: {currentResult.subject}</p>
+              <p className="text-[14px] text-[#374151]">{currentResult.className}</p>
             </div>
 
             {/* Meta row */}
@@ -202,7 +210,7 @@ export default function AssignmentOutputPage() {
 
             {/* Student Info */}
             <div className="mb-[24px] space-y-[12px]">
-              {['Name', 'Roll Number', `Class: ${currentResult.className} Section`].map((label) => (
+              {['Candidate Name', 'Candidate Email', 'Date of Assessment'].map((label) => (
                 <div key={label} className="flex items-end gap-[8px] text-[13px] text-[#374151]">
                   <span className="flex-shrink-0 leading-none">{label}:</span>
                   <div className="flex-1 border-b border-[#9CA3AF]" />
@@ -247,7 +255,7 @@ export default function AssignmentOutputPage() {
 
             <div className="mt-[32px] pt-[16px] border-t border-[#E5E7EB]">
               <p className="text-center text-[13px] font-semibold text-[#111111]">
-                End of Question Paper
+                End of Assessment
               </p>
             </div>
 

@@ -13,7 +13,7 @@ export async function generateToolkitAI(prompt: string) {
         max_tokens: 1000,
         temperature: 0.7,
         messages: [
-          { role: "system", content: "You are an expert teacher providing clear, helpful assistance. Do not output raw JSON, write in standard markdown format suitable for direct reading." },
+          { role: "system", content: "You are an expert technical hiring manager providing clear, helpful assistance. Do not output raw JSON, write in standard markdown format suitable for direct reading." },
           { role: "user", content: prompt }
         ]
       })

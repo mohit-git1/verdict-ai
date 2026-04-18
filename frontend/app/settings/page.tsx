@@ -64,7 +64,7 @@ export default function SettingsPage() {
                 style={{
                   background: avatar
                     ? 'transparent'
-                    : 'linear-gradient(135deg, #E8431C, #FF6B35)',
+                    : 'linear-gradient(135deg, #2563EB, #3B82F6)',
                 }}
               >
                 {avatar ? (
@@ -113,10 +113,10 @@ export default function SettingsPage() {
           {/* Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { label: 'Full Name', value: localName, setter: setLocalName },
-              { label: 'Email', value: localEmail, setter: setLocalEmail },
-              { label: 'School Name', value: localSchool, setter: setLocalSchool },
-              { label: 'City', value: localCity, setter: setLocalCity },
+              { label: 'Full Name', value: localName, setter: setLocalName, placeholder: 'e.g. John Doe' },
+              { label: 'Email', value: localEmail, setter: setLocalEmail, placeholder: 'e.g. hiring@company.com' },
+              { label: 'Company Name', value: localSchool, setter: setLocalSchool, placeholder: 'e.g. Anthropic, Google, Startup Inc.' },
+              { label: 'Location', value: localCity, setter: setLocalCity, placeholder: 'e.g. San Francisco, Bangalore' },
             ].map((field) => (
               <div key={field.label}>
                 <label className="block text-xs font-medium text-gray-500 mb-1.5">{field.label}</label>
@@ -124,6 +124,7 @@ export default function SettingsPage() {
                   type="text"
                   value={field.value}
                   onChange={(e) => field.setter(e.target.value)}
+                  placeholder={field.placeholder}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-400"
                 />
               </div>
@@ -172,7 +173,7 @@ export default function SettingsPage() {
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Notifications</h2>
           <div className="space-y-1">
             {[
-              { label: 'Assignment Generated', desc: 'Notify when AI finishes generating', on: true },
+              { label: 'Assessment Generated', desc: 'Notify when AI finishes generating', on: true },
               { label: 'Generation Failed', desc: 'Alert when generation fails', on: true },
               { label: 'Weekly Summary', desc: 'Weekly report of assignments created', on: false },
             ].map((item) => (
@@ -226,7 +227,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-gray-400 pb-8">VedaAI v1.0.0 · Built for teachers</p>
+        <p className="text-center text-xs text-gray-400 pb-8">VerdictAI v1.0.0 · Built for hiring teams</p>
       </div>
     </AppShell>
   )

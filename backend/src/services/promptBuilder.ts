@@ -18,43 +18,46 @@ export function buildPrompt(input: PromptInput): string {
   }).join('\n')
 
   const contextText = input.fileContent
-    ? `\n\nUse the following uploaded content as source material:\n${input.fileContent.substring(0, 3000)}`
+    ? `\n\nUse the following Job Description context as source material:\n${input.fileContent.substring(0, 3000)}`
     : ''
 
-  return `You are an expert teacher creating a formal exam question paper.
+  return `You are a technical hiring manager. Generate a complete assessment.
 
-Subject: ${input.subject || 'General Science'}
-Total Questions: ${totalQuestions}
-Total Marks: ${totalMarks}
-Additional Instructions: ${input.additionalInstructions || 'None'}
+Role: ${input.subject}
+Context: ${input.additionalInstructions || 'None'}
 ${contextText}
 
-Create a question paper with these sections:
+Sections to generate:
 ${sectionDetails}
 
-Difficulty distribution per section: 30% easy, 50% medium, 20% hard.
+Rules:
+- MCQ: exactly 4 options labeled A B C D
+- Coding: include input/output example
+- All questions relevant to: ${input.subject}
+- Mix: 30% easy, 50% medium, 20% hard
+- Include answer for every question
 
-Return ONLY valid JSON. No markdown, no explanation, no code blocks. Just raw JSON:
-
+Return ONLY this exact JSON, no extra text:
 {
-  "paperTitle": "Question Paper",
-  "subject": "${input.subject || 'General Science'}",
-  "className": "Class 10",
-  "timeAllowed": "3 Hours",
+  "paperTitle": "Technical Assessment",
+  "subject": "${input.subject}",
+  "className": "Candidate Assessment",
+  "timeAllowed": "90 Minutes",
   "maximumMarks": ${totalMarks},
   "sections": [
     {
       "id": "A",
       "title": "Section A",
-      "instruction": "Attempt all questions. Each question carries X marks.",
+      "instruction": "Answer all questions.",
       "questions": [
         {
-          "id": 1,
-          "text": "Question text here?",
-          "type": "short",
+          "id": "1",
+          "text": "question here",
+          "type": "mcq",
           "difficulty": "easy",
           "marks": 2,
-          "answer": "Detailed answer here"
+          "options": ["A. option", "B. option", "C. option", "D. option"],
+          "answer": "A. correct answer with brief explanation"
         }
       ]
     }

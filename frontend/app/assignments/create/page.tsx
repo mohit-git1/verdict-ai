@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDropzone } from 'react-dropzone'
 import AppShell from '@/components/layout/AppShell'
-import { useAssignmentStore } from '@/store/assignmentStore'
+import { useAssessmentStore } from '@/store/assignmentStore'
 import { assignmentsApi } from '@/lib/api'
 
 interface QuestionTypeRow {
@@ -15,20 +15,40 @@ interface QuestionTypeRow {
 
 const QUESTION_TYPES = [
   'Multiple Choice Questions',
-  'Short Questions',
-  'Long Questions',
-  'Diagram/Graph-Based Questions',
-  'Numerical Problems',
-  'True/False',
-  'Fill in the Blanks',
+  'Coding Problems',
+  'System Design Questions',
+  'Theory / Concept Questions',
+  'Scenario Based Questions',
+  'Debugging Challenges',
+  'SQL / Database Questions',
+  'Behavioural Questions'
 ]
 
-export default function CreateAssignmentPage() {
-  const router = useRouter()
-  const { addAssignment, setGenerating } = useAssignmentStore()
+const EXP_LEVELS = [
+  'Intern',
+  'Junior (0-2 years)',
+  'Mid (2-5 years)',
+  'Senior (5+ years)',
+  'Lead / Principal'
+]
 
-  const [title, setTitle] = useState('')
-  const [subject, setSubject] = useState('')
+const TECH_STACK = [
+  'React', 'Next.js', 'Vue.js', 'Angular', 'Node.js', 'Express.js',
+  'Python', 'Django', 'FastAPI', 'Java', 'Spring Boot', 'Go', 'Rust',
+  'MongoDB', 'PostgreSQL', 'MySQL', 'Redis', 'AWS', 'GCP', 'Azure',
+  'Docker', 'Kubernetes', 'TypeScript', 'GraphQL', 'REST APIs',
+  'System Design', 'Data Structures & Algorithms', 'Machine Learning', 'Data Science'
+]
+
+export default function CreateAssessmentPage() {
+  const router = useRouter()
+  const { addAssessment, setGenerating } = useAssessmentStore()
+
+  const [jobTitle, setJobTitle] = useState('')
+  const [companyName, setCompanyName] = useState('')
+  const [experienceLevel, setExperienceLevel] = useState('')
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([])
+  const [customSkill, setCustomSkill] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [additionalInstructions, setAdditionalInstructions] = useState('')
   const [file, setFile] = useState<File | null>(null)
@@ -36,10 +56,9 @@ export default function CreateAssignmentPage() {
   const [submitting, setSubmitting] = useState(false)
 
   const [questionTypes, setQuestionTypes] = useState<QuestionTypeRow[]>([
-    { id: '1', type: 'Multiple Choice Questions', numQuestions: 4, marks: 1 },
-    { id: '2', type: 'Short Questions', numQuestions: 3, marks: 2 },
-    { id: '3', type: 'Diagram/Graph-Based Questions', numQuestions: 5, marks: 5 },
-    { id: '4', type: 'Numerical Problems', numQuestions: 5, marks: 5 },
+    { id: '1', type: 'Multiple Choice Questions', numQuestions: 10, marks: 2 },
+    { id: '2', type: 'Theory / Concept Questions', numQuestions: 5, marks: 4 },
+    { id: '3', type: 'Scenario Based Questions', numQuestions: 3, marks: 10 },
   ])
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -48,7 +67,7 @@ export default function CreateAssignmentPage() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'application/pdf': ['.pdf'], 'text/plain': ['.txt'], 'image/*': ['.jpg', '.jpeg', '.png'] },
+    accept: { 'application/pdf': ['.pdf'], 'text/plain': ['.txt'] },
     maxSize: 10 * 1024 * 1024,
     multiple: false,
   })
@@ -73,12 +92,20 @@ export default function CreateAssignmentPage() {
   const totalQuestions = questionTypes.reduce((s, q) => s + q.numQuestions, 0)
   const totalMarks = questionTypes.reduce((s, q) => s + q.numQuestions * q.marks, 0)
 
+  const handleAddCustomSkill = () => {
+    if (customSkill.trim() && !selectedSkills.includes(customSkill.trim())) {
+      setSelectedSkills([...selectedSkills, customSkill.trim()])
+      setCustomSkill('')
+    }
+  }
+
   const validate = () => {
     const e: Record<string, string> = {}
-    if (!title.trim()) e.title = 'Title is required'
-    if (!subject.trim()) e.subject = 'Subject is required'
-    if (!dueDate) e.dueDate = 'Due date is required'
-    if (!additionalInstructions.trim()) e.additionalInstructions = 'Instructions are required'
+    if (!jobTitle.trim()) e.jobTitle = 'Job title is required'
+    if (!companyName.trim()) e.companyName = 'Company name is required'
+    if (!experienceLevel) e.experienceLevel = 'Select an experience level'
+    if (selectedSkills.length === 0) e.selectedSkills = 'Select at least one skill'
+    if (!dueDate) e.dueDate = 'Deadline is required'
     if (questionTypes.length === 0) e.questionTypes = 'Add at least one question type'
     questionTypes.forEach((q, i) => {
       if (q.numQuestions < 1) e[`q_${i}_num`] = 'Min 1'
@@ -89,90 +116,167 @@ export default function CreateAssignmentPage() {
   }
 
   const handleSubmit = async () => {
-  if (!validate()) return
-  setSubmitting(true)
-  try {
-    const formData = new FormData()
-    formData.append('title', title)
-    formData.append('subject', subject || 'General')
-    formData.append('dueDate', dueDate)
-    formData.append('questionTypes', JSON.stringify(questionTypes.map(q => ({
-      type: q.type, numQuestions: q.numQuestions, marks: q.marks
-    }))))
-    formData.append('additionalInstructions', additionalInstructions)
-    if (file && file.type === 'text/plain') formData.append('file', file)
+    if (!validate()) return
+    setSubmitting(true)
+    try {
+      const formData = new FormData()
+      formData.append('title', `${jobTitle} Assessment — ${companyName}`)
+      formData.append('subject', selectedSkills.join(', '))
+      formData.append('dueDate', dueDate)
+      formData.append('questionTypes', JSON.stringify(questionTypes.map(q => ({
+        type: q.type, numQuestions: q.numQuestions, marks: q.marks
+      }))))
+      const combinedInstructions = `Job Title: ${jobTitle}\nCompany: ${companyName}\nExperience Level: ${experienceLevel}\nRequired Skills: ${selectedSkills.join(', ')}\n\n${additionalInstructions}`
+      formData.append('additionalInstructions', combinedInstructions)
+      if (file && (file?.type === 'text/plain' || file?.type === 'application/pdf')) {
+        formData.append('file', file)
+      }
 
-    const res = await assignmentsApi.create(formData)
-    addAssignment(res.data.data)
-    setGenerating(true)
-    router.push(`/assignments/${res.data.data._id}`)
-  } catch (err: any) {
-    if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-      setErrors({ submit: '⏳ Taking longer than usual. Check Assignments page — your paper may already be generating.' })
-    } else {
-      setErrors({ submit: '⚠️ Couldn\'t connect. Check the Assignments page — your request may have gone through.' })
+      const res = await assignmentsApi.create(formData)
+      addAssessment(res.data.data)
+      setGenerating(true)
+      router.push(`/assignments/${res.data.data._id}`)
+    } catch (err: any) {
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setErrors({ submit: '⏳ Taking longer than usual. Check Assessments page — your paper may already be generating.' })
+      } else {
+        setErrors({ submit: '⚠️ Couldn\'t connect. Check the Assessments page — your request may have gone through.' })
+      }
+    } finally {
+      setSubmitting(false)
     }
-  } finally {
-    setSubmitting(false)
   }
-}
 
   return (
-    <AppShell showBack title="Assignment">
+    <AppShell showBack title="Create Assessment">
       <div className="max-w-[720px] mx-auto pb-24 md:pb-12">
         {/* Page header */}
         <div className="mb-6">
           <div className="flex items-center gap-[8px] mb-[2px]">
-            <div className="w-[8px] h-[8px] rounded-full bg-[#22C55E]"></div>
-            <h1 className="text-[18px] font-semibold text-[#111111]">Create Assignment</h1>
+            <div className="w-[8px] h-[8px] rounded-full bg-[#2563EB]"></div>
+            <h1 className="text-[18px] font-semibold text-[#111111]">Create Assessment</h1>
           </div>
-          <p className="text-[13px] text-[#6B7280] ml-[16px]">Set up a new assignment for your students</p>
+          <p className="text-[13px] text-[#6B7280] ml-[16px]">Generate a role-specific technical assessment</p>
         </div>
 
         {/* Stepper */}
         <div className="mb-[32px]">
           <div className="w-full h-[4px] bg-[#E5E7EB] rounded-full">
-            <div className="h-[4px] bg-[#111111] rounded-full" style={{ width: '50%' }} />
+            <div className="h-[4px] bg-[#2563EB] rounded-full" style={{ width: '50%' }} />
           </div>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-[20px] border border-[#F0F0F0] p-[24px] md:p-[32px]">
 
-          {/* Title */}
+          {/* Job Title */}
           <div className="mb-6">
             <label className="block text-[13px] font-medium text-[#111111] mb-1.5">
-              Assignment Title <span className="text-red-500">*</span>
+              Job Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              placeholder="e.g. Quiz on Electricity"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className={`w-full px-[16px] py-[10px] border rounded-lg text-sm text-[#111111] placeholder-[#9CA3AF] focus:outline-none focus:border-[#D1D5DB] transition-colors ${errors.title ? 'border-red-300' : 'border-[#E5E7EB]'}`}
+              placeholder="e.g. Full Stack Engineer, Data Scientist"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              className={`w-full px-[16px] py-[10px] border rounded-lg text-sm text-[#111111] placeholder-[#9CA3AF] focus:outline-none focus:border-[#D1D5DB] transition-colors ${errors.jobTitle ? 'border-red-300' : 'border-[#E5E7EB]'}`}
             />
-            {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
+            {errors.jobTitle && <p className="text-[12px] text-red-500 mt-1">{errors.jobTitle}</p>}
           </div>
 
-          {/* Subject */}
+          {/* Company Name */}
           <div className="mb-6">
             <label className="block text-[13px] font-medium text-[#111111] mb-1.5">
-              Subject <span className="text-red-500">*</span>
+              Company Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              placeholder="e.g. Science, Mathematics"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className={`w-full px-[16px] py-[10px] border rounded-lg text-sm text-[#111111] placeholder-[#9CA3AF] focus:outline-none focus:border-[#D1D5DB] transition-colors ${errors.subject ? 'border-red-300' : 'border-[#E5E7EB]'}`}
+              placeholder="e.g. Anthropic, Google, Startup Inc."
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              className={`w-full px-[16px] py-[10px] border rounded-lg text-sm text-[#111111] placeholder-[#9CA3AF] focus:outline-none focus:border-[#D1D5DB] transition-colors ${errors.companyName ? 'border-red-300' : 'border-[#E5E7EB]'}`}
             />
-            {errors.subject && <p className="text-[12px] text-red-500 mt-1">{errors.subject}</p>}
+            {errors.companyName && <p className="text-[12px] text-red-500 mt-1">{errors.companyName}</p>}
+          </div>
+
+          {/* Experience Level */}
+          <div className="mb-6">
+            <label className="block text-[13px] font-medium text-[#111111] mb-1.5">
+              Experience Level <span className="text-red-500">*</span>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {EXP_LEVELS.map(level => (
+                <button
+                  key={level}
+                  type="button"
+                  onClick={() => setExperienceLevel(level)}
+                  className={`px-4 py-2 rounded-full text-[13px] font-medium transition-colors border ${experienceLevel === level ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'}`}
+                >
+                  {level}
+                </button>
+              ))}
+            </div>
+            {errors.experienceLevel && <p className="text-[12px] text-red-500 mt-1">{errors.experienceLevel}</p>}
+          </div>
+
+          {/* Required Skills */}
+          <div className="mb-6">
+            <label className="block text-[13px] font-medium text-[#111111] mb-1.5">
+              Required Skills <span className="text-red-500">*</span>
+            </label>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {TECH_STACK.map(skill => (
+                <button
+                  key={skill}
+                  type="button"
+                  onClick={() => {
+                    if (selectedSkills.includes(skill)) {
+                      setSelectedSkills(selectedSkills.filter(s => s !== skill))
+                    } else {
+                      setSelectedSkills([...selectedSkills, skill])
+                    }
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors border ${selectedSkills.includes(skill) ? 'bg-[#DBEAFE] text-[#1D4ED8] border-[#BFDBFE]' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}
+                >
+                  {skill}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Add custom skill..." 
+                value={customSkill}
+                onChange={e => setCustomSkill(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleAddCustomSkill()
+                  }
+                }}
+                className="flex-1 px-[16px] py-[8px] border border-gray-200 rounded-lg text-sm text-[#111111] focus:outline-none focus:border-[#D1D5DB]"
+              />
+              <button 
+                type="button" 
+                onClick={handleAddCustomSkill}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200"
+              >
+                Add
+              </button>
+            </div>
+            {selectedSkills.length > 0 && (
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                <span className="text-xs font-semibold text-blue-800">Selected Skills: </span>
+                <span className="text-xs text-blue-900">{selectedSkills.join(', ')}</span>
+              </div>
+            )}
+            {errors.selectedSkills && <p className="text-[12px] text-red-500 mt-1">{errors.selectedSkills}</p>}
           </div>
 
           {/* Section heading */}
-          <div className="mb-5">
-            <h2 className="text-[15px] font-semibold text-[#111111]">Assignment Details</h2>
-            <p className="text-[12px] text-[#9CA3AF] mt-0.5">Basic information about your assignment</p>
+          <div className="mb-5 mt-10">
+            <h2 className="text-[15px] font-semibold text-[#111111]">Assessment Details</h2>
+            <p className="text-[12px] text-[#9CA3AF] mt-0.5">Configure the technical assessment parameters</p>
           </div>
 
           {/* File Upload Dropzone */}
@@ -202,9 +306,9 @@ export default function CreateAssignmentPage() {
                   </svg>
                 </div>
                 <p className="text-[14px] font-medium text-[#374151]">
-                  {isDragActive ? 'Drop file here...' : 'Choose a file or drag & drop it here'}
+                  {isDragActive ? 'Drop JD file here...' : 'Upload Job Description (PDF/TXT)'}
                 </p>
-                <p className="text-[12px] text-[#9CA3AF] mt-1">JPEG, PNG, up to 10MB</p>
+                <p className="text-[12px] text-[#9CA3AF] mt-1">Optional. The AI will use this context to generate better questions.</p>
                 <button
                   type="button"
                   className="mt-4 px-4 py-1.5 bg-white border border-[#E5E7EB] rounded-lg text-[12px] font-medium text-[#374151] hover:bg-[#F9FAFB] transition-colors"
@@ -215,12 +319,12 @@ export default function CreateAssignmentPage() {
               </div>
             )}
           </div>
-          <p className="text-[12px] text-[#9CA3AF] text-center mb-[24px]">Upload images of your preferred document/image</p>
+          <p className="text-[12px] text-[#9CA3AF] text-center mb-[24px]">Upload job descriptions to tailor the assessment</p>
 
-          {/* Due Date */}
+          {/* Assessment Deadline */}
           <div className="mb-6">
             <label className="block text-[13px] font-medium text-[#111111] mb-1.5">
-              Due Date <span className="text-red-500">*</span>
+              Assessment Deadline <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -332,23 +436,17 @@ export default function CreateAssignmentPage() {
           {/* Additional Info */}
           <div className="mb-2">
             <label className="block text-[13px] font-medium text-[#111111] mb-1.5">
-              Additional Information <span className="font-normal">(For better output)</span>
+              Additional Instructions <span className="font-normal">(Optional)</span>
             </label>
             <div className="relative">
               <textarea
-                placeholder="e.g. Generate a question paper for 3 hour exam duration..."
+                placeholder="e.g. Focus deeply on Next.js App Router..."
                 value={additionalInstructions}
                 onChange={(e) => setAdditionalInstructions(e.target.value)}
                 rows={3}
-                className={`w-full px-[16px] py-[12px] border rounded-xl text-[14px] text-[#111111] placeholder-[#9CA3AF] focus:outline-none focus:border-[#D1D5DB] resize-none pb-8 ${errors.additionalInstructions ? 'border-red-300' : 'border-[#E5E7EB]'}`}
+                className="w-full px-[16px] py-[12px] border rounded-xl text-[14px] text-[#111111] placeholder-[#9CA3AF] focus:outline-none focus:border-[#D1D5DB] resize-none pb-8 border-[#E5E7EB]"
               />
-              <button className="absolute right-[12px] bottom-[12px] text-[#9CA3AF] hover:text-[#374151] transition-colors p-1">
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
-                </svg>
-              </button>
             </div>
-            {errors.additionalInstructions && <p className="text-[12px] text-red-500 mt-1">{errors.additionalInstructions}</p>}
           </div>
 
           {errors.submit && (
@@ -373,7 +471,7 @@ export default function CreateAssignmentPage() {
             onClick={handleSubmit}
             disabled={submitting}
             className="w-full sm:w-auto flex items-center justify-center gap-[6px] h-[40px] px-[24px] rounded-full text-[13px] font-medium text-white transition-all disabled:opacity-60"
-            style={{ background: '#111111' }}
+            style={{ background: '#2563EB' }}
           >
             {submitting ? (
               <>
@@ -382,7 +480,7 @@ export default function CreateAssignmentPage() {
               </>
             ) : (
               <>
-                Next
+                Generate Assessment
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>

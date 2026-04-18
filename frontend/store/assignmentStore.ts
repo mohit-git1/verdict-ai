@@ -1,62 +1,66 @@
 import { create } from 'zustand'
-import { Assignment, Result } from '@/lib/api'
+import { Assessment, Result } from '@/lib/api'
 
-interface AssignmentStore {
-  assignments: Assignment[]
-  currentAssignment: Assignment | null
+interface AssessmentStore {
+  assignments: Assessment[]
+  currentAssessment: Assessment | null
   currentResult: Result | null
   isLoading: boolean
   isGenerating: boolean
   error: string | null
+  progressMessage: string
 
-  setAssignments: (a: Assignment[]) => void
-  addAssignment: (a: Assignment) => void
-  updateAssignmentStatus: (id: string, status: Assignment['status']) => void
-  removeAssignment: (id: string) => void
-  setCurrentAssignment: (a: Assignment | null) => void
+  setAssessments: (a: Assessment[]) => void
+  addAssessment: (a: Assessment) => void
+  updateAssessmentStatus: (id: string, status: Assessment['status']) => void
+  removeAssessment: (id: string) => void
+  setCurrentAssessment: (a: Assessment | null) => void
   setCurrentResult: (r: Result | null) => void
   setLoading: (v: boolean) => void
   setGenerating: (v: boolean) => void
   setError: (e: string | null) => void
+  setProgressMessage: (msg: string) => void
 }
 
 import { persist } from 'zustand/middleware'
 
-export const useAssignmentStore = create<AssignmentStore>()(
+export const useAssessmentStore = create<AssessmentStore>()(
   persist(
     (set) => ({
       assignments: [],
-      currentAssignment: null,
+      currentAssessment: null,
       currentResult: null,
       isLoading: false,
       isGenerating: false,
       error: null,
+      progressMessage: 'Starting generation...',
 
-      setAssignments: (assignments) => set({ assignments }),
-      addAssignment: (assignment) =>
+      setAssessments: (assignments) => set({ assignments }),
+      addAssessment: (assignment) =>
         set((state) => ({ assignments: [assignment, ...state.assignments] })),
-      updateAssignmentStatus: (id, status) =>
+      updateAssessmentStatus: (id, status) =>
         set((state) => ({
           assignments: state.assignments.map((a) =>
             a._id === id ? { ...a, status } : a
           ),
-          currentAssignment:
-            state.currentAssignment?._id === id
-              ? { ...state.currentAssignment, status }
-              : state.currentAssignment,
+          currentAssessment:
+            state.currentAssessment?._id === id
+              ? { ...state.currentAssessment, status }
+              : state.currentAssessment,
         })),
-      removeAssignment: (id) =>
+      removeAssessment: (id) =>
         set((state) => ({
           assignments: state.assignments.filter((a) => a._id !== id),
         })),
-      setCurrentAssignment: (currentAssignment) => set({ currentAssignment }),
+      setCurrentAssessment: (currentAssessment) => set({ currentAssessment }),
       setCurrentResult: (currentResult) => set({ currentResult }),
       setLoading: (isLoading) => set({ isLoading }),
       setGenerating: (isGenerating) => set({ isGenerating }),
       setError: (error) => set({ error }),
+      setProgressMessage: (progressMessage) => set({ progressMessage }),
     }),
     {
-      name: 'veda-assignment-store',
+      name: 'verdict-assignment-store',
       partialize: (state) => ({ assignments: state.assignments }),
     }
   )

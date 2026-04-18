@@ -39,12 +39,12 @@ export default function GroupsPage() {
   }
 
   const copyInvite = (code: string) => {
-    navigator.clipboard.writeText(`https://vedaai.app/join/${code}`)
+    navigator.clipboard.writeText(`https://verdictai.app/join/${code}`)
     showToast('Link copied!')
   }
 
   return (
-    <AppShell title="My Groups">
+    <AppShell title="My Team">
       <div className="max-w-[1000px] mx-auto px-4 py-8">
         
         {/* Header */}
@@ -52,15 +52,15 @@ export default function GroupsPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-              <h1 className="text-[18px] font-semibold text-gray-900">My Groups</h1>
+              <h1 className="text-[18px] font-semibold text-gray-900">My Team</h1>
             </div>
-            <p className="text-[14px] text-gray-500 ml-4">Manage your classes and student groups</p>
+            <p className="text-[14px] text-gray-500 ml-4">Manage your hiring team and collaborators</p>
           </div>
           <button 
             onClick={() => setIsModalOpen(true)} 
             className="bg-[#111111] text-white rounded-full px-5 py-2.5 text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm active:scale-95"
           >
-            Create Group
+            Add Team Member
           </button>
         </div>
 
@@ -72,13 +72,13 @@ export default function GroupsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">No groups yet</h2>
-            <p className="text-sm text-gray-500 mb-6">Create your first group to start managing students</p>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">No team members yet</h2>
+            <p className="text-sm text-gray-500 mb-6">Add your first team member to start collaborating</p>
             <button 
               onClick={() => setIsModalOpen(true)} 
               className="bg-[#111111] text-white rounded-full px-6 py-3 text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm active:scale-95"
             >
-              Create Your First Group
+              Add Your First Team Member
             </button>
           </div>
         ) : (
@@ -108,7 +108,7 @@ export default function GroupsPage() {
                   </div>
                   <button 
                     onClick={() => copyInvite(g.inviteCode)} 
-                    className="flex items-center gap-1.5 text-[#E8431C] text-[13px] font-bold hover:bg-orange-50 px-3 py-1.5 rounded-lg transition-colors"
+                    className="flex items-center gap-1.5 text-[#2563EB] text-[13px] font-bold hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
                   >
                     <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />

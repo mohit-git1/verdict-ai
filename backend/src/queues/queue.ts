@@ -16,6 +16,7 @@ const getRedisConnection = () => {
 
 export const assignmentQueue = new Queue('assignment-generation', {
   connection: getRedisConnection(),
+  prefix: process.env.QUEUE_PREFIX || 'prod',
   defaultJobOptions: {
     attempts: 3,
     backoff: { type: 'exponential', delay: 2000 },

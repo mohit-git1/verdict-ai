@@ -2,21 +2,21 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AppShell from '@/components/layout/AppShell'
-import { useAssignmentStore } from '@/store/assignmentStore'
+import { useAssessmentStore } from '@/store/assignmentStore'
 import { generateToolkitAI } from './actions'
 
 const TOOLS = [
-  { id: 'quiz', title: 'Quiz Generator', desc: 'Generate custom quizzes from any topic or document instantly', iBadge: 'bg-orange-100 text-orange-500', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />, action: 'Generate Quiz' },
-  { id: 'lesson', title: 'Lesson Planner', desc: 'Create detailed lesson plans aligned with curriculum standards', iBadge: 'bg-purple-100 text-purple-600', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />, action: 'Plan Lesson' },
-  { id: 'grade', title: 'Grade Assistant', desc: 'Get AI suggestions for grading criteria and rubrics', iBadge: 'bg-green-100 text-green-600', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />, action: 'Create Rubric' },
-  { id: 'doubt', title: 'Doubt Solver', desc: 'Students can submit doubts, AI provides instant explanations', iBadge: 'bg-blue-100 text-blue-600', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />, action: 'Open Solver' },
-  { id: 'summary', title: 'Summary Generator', desc: 'Convert long notes or chapters into concise summaries', iBadge: 'bg-yellow-100 text-yellow-600', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />, action: 'Summarize' },
+  { id: 'quiz', title: 'Assessment Generator', desc: 'Generate role-specific technical assessments from any job description instantly', iBadge: 'bg-orange-100 text-orange-500', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />, action: 'Generate Assessment' },
+  { id: 'lesson', title: 'Interview Planner', desc: 'Create structured interview plans with questions mapped to required competencies', iBadge: 'bg-purple-100 text-purple-600', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />, action: 'Plan Interview' },
+  { id: 'grade', title: 'Scoring Assistant', desc: 'Get AI suggestions for scoring criteria and evaluation rubrics', iBadge: 'bg-green-100 text-green-600', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />, action: 'Create Rubric' },
+  { id: 'doubt', title: 'JD Analyzer', desc: 'Paste a job description and get key skills, requirements and assessment strategy', iBadge: 'bg-blue-100 text-blue-600', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />, action: 'Analyze JD' },
+  { id: 'summary', title: 'Candidate Summarizer', desc: 'Summarize candidate profiles and highlight skill gaps vs job requirements', iBadge: 'bg-yellow-100 text-yellow-600', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />, action: 'Summarize' },
   { id: 'bank', title: 'Question Bank', desc: 'Build and organize a reusable bank of questions by topic', iBadge: 'bg-red-100 text-red-500', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />, action: 'Open Bank' }
 ]
 
 export default function ToolkitPage() {
   const router = useRouter()
-  const { assignments } = useAssignmentStore()
+  const { assignments } = useAssessmentStore()
   const [activeTool, setActiveTool] = useState<any>(null)
   const [inputs, setInputs] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
@@ -32,7 +32,7 @@ export default function ToolkitPage() {
     if (activeTool.id === 'quiz') return `Create a quiz about ${inputs.topic || 'General Science'} with ${inputs.count || '5'} questions. Difficulty: ${inputs.diff || 'Medium'}.`
     if (activeTool.id === 'lesson') return `Create a detailed lesson plan for Grade ${inputs.grade || '10'}, Subject: ${inputs.subject || 'Math'}, Topic: ${inputs.topic || 'Algebra'}, Duration: ${inputs.duration || '60 mins'}.`
     if (activeTool.id === 'grade') return `Create a grading rubric for assignment type: ${inputs.type || 'Essay'}. Total Marks: ${inputs.marks || '100'}. Criteria: ${inputs.criteria || 'Standard'}.`
-    if (activeTool.id === 'doubt') return `A student has a doubt: "${inputs.question || 'How does photosynthesis work?'}". Provide a clear, teacher-style explanation.`
+    if (activeTool.id === 'doubt') return `A candidate has a doubt: "${inputs.question || 'How does this skill gap work?'}". Provide a clear, professional explanation.`
     if (activeTool.id === 'summary') return `Summarize this text concisely: \n\n${inputs.text || 'Placeholder long text to summarize'}`
     return ''
   }
@@ -66,7 +66,7 @@ export default function ToolkitPage() {
     if (activeTool.id === 'bank') {
       return (
         <div className="space-y-4">
-          <p className="text-sm text-gray-500 mb-4">View your previously assigned question papers locally filtered here.</p>
+          <p className="text-sm text-gray-500 mb-4">View your previously assigned technical assessments locally filtered here.</p>
           {assignments.length > 0 ? (
             <div className="space-y-3">
               {assignments.map(a => (
@@ -79,7 +79,7 @@ export default function ToolkitPage() {
                     <span className="font-semibold text-sm text-gray-900 truncate">{a.title}</span>
                     <span className="text-xs text-gray-500 truncate">{a.subject} • {a.status}</span>
                   </div>
-                  <span className="text-[#E8431C] text-sm font-medium flex-shrink-0 group-hover:underline">View</span>
+                  <span className="text-[#2563EB] text-sm font-medium flex-shrink-0 group-hover:underline">View</span>
                 </div>
               ))}
             </div>
@@ -116,7 +116,7 @@ export default function ToolkitPage() {
     if (activeTool.id === 'grade') return (
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <div><label className="block text-xs font-semibold text-gray-700 mb-1">Assignment Type</label><input type="text" onChange={e=>setInputs({...inputs, type: e.target.value})} className="w-full text-sm p-2 border border-gray-200 rounded-lg outline-none" placeholder="e.g. Research Paper" /></div>
+          <div><label className="block text-xs font-semibold text-gray-700 mb-1">Assessment Type</label><input type="text" onChange={e=>setInputs({...inputs, type: e.target.value})} className="w-full text-sm p-2 border border-gray-200 rounded-lg outline-none" placeholder="e.g. Research Paper" /></div>
           <div><label className="block text-xs font-semibold text-gray-700 mb-1">Total Marks</label><input type="number" onChange={e=>setInputs({...inputs, marks: e.target.value})} className="w-full text-sm p-2 border border-gray-200 rounded-lg outline-none" placeholder="100" /></div>
         </div>
         <div><label className="block text-xs font-semibold text-gray-700 mb-1">Grading Criteria</label><input type="text" onChange={e=>setInputs({...inputs, criteria: e.target.value})} className="w-full text-sm p-2 border border-gray-200 rounded-lg outline-none" placeholder="e.g. Grammar, Creativity..." /></div>
@@ -145,9 +145,9 @@ export default function ToolkitPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-[18px] font-semibold text-gray-900">AI Teacher's Toolkit</h1>
+            <h1 className="text-[18px] font-semibold text-gray-900">AI Hiring Toolkit</h1>
           </div>
-          <p className="text-[14px] text-gray-500">Powerful AI tools to supercharge your teaching</p>
+          <p className="text-[14px] text-gray-500">Powerful AI tools to supercharge your hiring process</p>
         </div>
 
         {/* Tools Grid */}
@@ -204,7 +204,7 @@ export default function ToolkitPage() {
                 </form>
               ) : isLoading ? (
                 <div className="flex flex-col items-center justify-center py-10">
-                  <div className="w-10 h-10 border-[3px] border-gray-100 border-t-[#E8431C] rounded-full animate-spin mb-4" />
+                  <div className="w-10 h-10 border-[3px] border-gray-100 border-t-[#2563EB] rounded-full animate-spin mb-4" />
                   <span className="text-sm font-medium text-gray-600">AI is processing...</span>
                 </div>
               ) : (

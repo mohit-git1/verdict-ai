@@ -1,7 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useAssignmentStore } from '@/store/assignmentStore'
+import { useAssessmentStore } from '@/store/assignmentStore'
 import { useUserStore } from '@/store/userStore'
 
 interface TopbarProps {
@@ -10,14 +10,14 @@ interface TopbarProps {
   onMenuClick?: () => void
 }
 
-export default function Topbar({ showBack = false, title = 'Assignment', onMenuClick }: TopbarProps) {
+export default function Topbar({ showBack = false, title = 'Assessment', onMenuClick }: TopbarProps) {
   const router = useRouter()
   const [notifOpen, setNotifOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
-  const { assignments } = useAssignmentStore()
+  const { assignments } = useAssessmentStore()
   const { name, avatar, schoolName } = useUserStore()
 
-  const pendingAssignments = assignments.filter(
+  const pendingAssessments = assignments.filter(
     (a) => a.status === 'pending' || a.status === 'processing'
   )
 
@@ -34,7 +34,7 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
       style={{
         width: size,
         height: size,
-        background: avatar ? 'transparent' : 'linear-gradient(135deg, #E8431C, #FF6B35)',
+        background: avatar ? 'transparent' : 'linear-gradient(135deg, #2563EB, #3B82F6)',
       }}
     >
       {avatar ? (
@@ -51,13 +51,13 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
     <div className="absolute right-0 top-12 w-80 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 overflow-hidden">
       <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-900">Notifications</p>
-        {pendingAssignments.length > 0 && (
-          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: '#E8431C' }}>
-            {pendingAssignments.length}
+        {pendingAssessments.length > 0 && (
+          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: '#2563EB' }}>
+            {pendingAssessments.length}
           </span>
         )}
       </div>
-      {pendingAssignments.length === 0 ? (
+      {pendingAssessments.length === 0 ? (
         <div className="px-4 py-8 text-center">
           <svg className="mx-auto mb-3" width="36" height="36" fill="none" stroke="#D1D5DB" strokeWidth="1.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
@@ -67,7 +67,7 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
         </div>
       ) : (
         <div className="max-h-80 overflow-y-auto">
-          {pendingAssignments.map((a) => (
+          {pendingAssessments.map((a) => (
             <button
               key={a._id}
               onClick={() => { router.push(`/assignments/${a._id}`); setNotifOpen(false) }}
@@ -82,7 +82,7 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{a.title}</p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  {a.status === 'processing' ? 'Generating question paper...' : 'Waiting to generate...'}
+                  {a.status === 'processing' ? 'Generating assessment...' : 'Waiting to generate...'}
                 </p>
               </div>
               <span
@@ -141,8 +141,8 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
             onClick={() => router.push('/')} 
             className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
           >
-            <img src="/VedaAI.png" alt="VedaAI" width={32} height={32} style={{ borderRadius: '22%' }} />
-            <span className="font-bold text-[16px] text-gray-900">VedaAI</span>
+            <img src="/VerdictAI.png" alt="VerdictAI" width={32} height={32} style={{ borderRadius: '22%' }} />
+            <span className="font-bold text-[16px] text-gray-900">VerdictAI</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -150,7 +150,7 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
                 <svg width="20" height="20" fill="none" stroke="#374151" strokeWidth="1.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
                 </svg>
-                {pendingAssignments.length > 0 && <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-red-500"></span>}
+                {pendingAssessments.length > 0 && <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-red-500"></span>}
               </button>
               {notifOpen && <NotifDropdown />}
             </div>
@@ -203,8 +203,8 @@ export default function Topbar({ showBack = false, title = 'Assignment', onMenuC
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
               </svg>
-              {pendingAssignments.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style={{ background: '#E8431C' }}></span>
+              {pendingAssessments.length > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style={{ background: '#2563EB' }}></span>
               )}
             </button>
             {notifOpen && <NotifDropdown />}

@@ -13,7 +13,7 @@ export interface QuestionType {
   marks: number
 }
 
-export interface Assignment {
+export interface Assessment {
   _id: string
   title: string
   subject: string
@@ -55,13 +55,13 @@ export interface Result {
 
 export const assignmentsApi = {
   getAll: () =>
-    api.get<{ success: boolean; data: Assignment[] }>('/assignments'),
+    api.get<{ success: boolean; data: Assessment[] }>('/assignments'),
 
   getOne: (id: string) =>
-    api.get<{ success: boolean; data: { assignment: Assignment; result: Result | null } }>(`/assignments/${id}`),
+    api.get<{ success: boolean; data: { assignment: Assessment; result: Result | null } }>(`/assignments/${id}`),
 
   create: (formData: FormData) =>
-    api.post<{ success: boolean; data: Assignment }>('/assignments', formData),
+    api.post<{ success: boolean; data: Assessment }>('/assignments', formData),
 
   delete: (id: string) => api.delete(`/assignments/${id}`),
 
